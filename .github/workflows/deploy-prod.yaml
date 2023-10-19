@@ -1,0 +1,30 @@
+name: Deploy til prod-gcp
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    name: Deploy til prod-gcp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Lag release tag
+        env:
+          VERSION_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          APPLICATION=$(echo $GITHUB_REPOSITORY | cut -d "/" -f 2)
+          IMAGE=ghcr.io/$GITHUB_REPOSITORY:$VERSION_TAG
+          echo "IMAGE=${IMAGE}" >> $GITHUB_ENV
+          echo $IMAGE
+      - name: Deploy til prod-gcp
+        uses: nais/deploy/actions/deploy@v1
+        env:
+          APIKEY: ${{ secrets.NAIS_DEPLOY_APIKEY }}
+          CLUSTER: prod-gcp
+          RESOURCE: .nais/nais-prod.yaml
+          VARS: .nais/prod.json
+      - uses: navikt/digihot-deploy/actions/post-production@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

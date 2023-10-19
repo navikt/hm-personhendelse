@@ -1,0 +1,7 @@
+{
+  "HTTP_PORT": "8080",
+  "RAPID_APP_NAME": "hm-personhendelse",
+  "KAFKA_RAPID_TOPIC": "teamdigihot.hm-soknadsbehandling-v1",
+  "KAFKA_CONSUMER_GROUP_ID": "hm-personhendelse-v1",
+  "KAFKA_RESET_POLICY": "latest"
+}
