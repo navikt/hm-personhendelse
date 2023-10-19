@@ -13,14 +13,10 @@ dependencies {
     testImplementation(libs.bundles.test)
 }
 
-application {
-    mainClass.set("no.nav.hjelpemidler.personhendelse.ApplicationKt")
-}
+val javaVersion = JavaLanguageVersion.of(17)
+java { toolchain { languageVersion.set(javaVersion) } }
+kotlin { jvmToolchain { languageVersion.set(javaVersion) } }
 
-kotlin {
-    jvmToolchain(17)
-}
+application { mainClass.set("no.nav.hjelpemidler.personhendelse.ApplicationKt") }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
+tasks.test { useJUnitPlatform() }
