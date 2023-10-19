@@ -14,7 +14,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("no.nav.hjelpemidler.hotsak.river.ApplicationKt")
+    mainClass.set("no.nav.hjelpemidler.personhendelse.ApplicationKt")
 }
 
 kotlin {
