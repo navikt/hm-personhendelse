@@ -4,6 +4,7 @@ dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
         mavenCentral()
+        maven("https://packages.confluent.io/maven/")
         maven("https://jitpack.io")
         maven {
             url = uri("https://maven.pkg.github.com/navikt/hm-http")
@@ -25,7 +26,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from("no.nav.hjelpemidler:hm-katalog:0.0.35")
+            from("no.nav.hjelpemidler:hm-katalog:0.0.43")
         }
     }
 }
