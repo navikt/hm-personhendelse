@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.personhendelse
 
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import mu.KLogger
+import mu.KotlinLogging
 
-val secureLog: Logger = LoggerFactory.getLogger("tjenestekall")
+val secureLog: KLogger = KotlinLogging.logger("tjenestekall")
