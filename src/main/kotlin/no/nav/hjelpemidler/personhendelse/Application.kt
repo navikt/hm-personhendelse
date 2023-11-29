@@ -30,7 +30,9 @@ fun Application.main() {
         topology {
             val identhendelseStream = stream(
                 Configuration.IDENTHENDELSE_TOPIC,
-                Consumed.with(Serdes.String(), GenericAvroSerde())
+                Consumed.with(Serdes.String(), GenericAvroSerde().apply {
+                    configure(Configuration.kafkaSchemaRegistryConfiguration(), false)
+                })
             )
             val skjermingshendelseStream = stream(
                 Configuration.SKJERMINGSHENDELSE_TOPIC,

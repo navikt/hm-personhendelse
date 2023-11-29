@@ -21,7 +21,7 @@ object Configuration {
     val IDENTHENDELSE_TOPIC by EnvironmentVariable
     val SKJERMINGSHENDELSE_TOPIC by EnvironmentVariable
 
-    fun kafkaSecurityConfiguration() = when (Environment.current) {
+    fun kafkaSecurityConfiguration(): Map<String, String> = when (Environment.current) {
         LocalEnvironment -> mapOf(
             CommonClientConfigs.SECURITY_PROTOCOL_CONFIG to SecurityProtocol.PLAINTEXT.name,
 
@@ -41,14 +41,16 @@ object Configuration {
         )
     }
 
+    fun kafkaSchemaRegistryConfiguration(): Map<String, String> = mapOf(
+        AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to KafkaEnvironmentVariable.KAFKA_SCHEMA_REGISTRY,
+        SchemaRegistryClientConfig.USER_INFO_CONFIG to "${KafkaEnvironmentVariable.KAFKA_SCHEMA_REGISTRY_USER}:${KafkaEnvironmentVariable.KAFKA_SCHEMA_REGISTRY_PASSWORD}",
+    )
+
     fun kafkaStreamsConfiguration(bootstrapServers: String = KafkaEnvironmentVariable.KAFKA_BROKERS): Map<String, String> =
         mapOf(
             StreamsConfig.APPLICATION_ID_CONFIG to KAFKA_APPLICATION_ID,
             StreamsConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
             StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG to Serdes.String().javaClass.name,
             StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG to Serdes.String().javaClass.name,
-
-            AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG to KafkaEnvironmentVariable.KAFKA_SCHEMA_REGISTRY,
-            SchemaRegistryClientConfig.USER_INFO_CONFIG to "${KafkaEnvironmentVariable.KAFKA_SCHEMA_REGISTRY_USER}:${KafkaEnvironmentVariable.KAFKA_SCHEMA_REGISTRY_PASSWORD}",
         ) + kafkaSecurityConfiguration()
 }
