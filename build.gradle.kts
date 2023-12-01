@@ -37,7 +37,7 @@ dependencies {
     testImplementation(libs.testcontainers.kafka)
 }
 
-val javaVersion = JavaLanguageVersion.of(17)
+val javaVersion = JavaLanguageVersion.of(21)
 java { toolchain { languageVersion.set(javaVersion) } }
 kotlin { jvmToolchain { languageVersion.set(javaVersion) } }
 

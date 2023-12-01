@@ -40,11 +40,9 @@ fun Application.main() {
             )
 
             identhendelseStream.foreach { key, value ->
-                secureLog.info { "key: $key, value: $value" }
             }
 
             skjermingshendelseStream.foreach { key, value ->
-                secureLog.info { "key: $key, value: $value" }
             }
         }
     }
