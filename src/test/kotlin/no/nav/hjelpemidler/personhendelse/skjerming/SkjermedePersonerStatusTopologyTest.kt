@@ -22,15 +22,15 @@ class SkjermedePersonerStatusTopologyTest {
         val inputTopic = driver.createInputTopic(
             Configuration.SKJERMEDE_PERSONER_STATUS_TOPIC,
             stringSerde.serializer(),
-            Serdes.Boolean().serializer()
+            stringSerde.serializer(),
         )
         val outputTopic = driver.createOutputTopic(
             Configuration.KAFKA_RAPID_TOPIC,
             stringSerde.deserializer(),
-            jsonSerde<SkjermetPersonStatusEvent>().deserializer()
+            jsonSerde<SkjermetPersonStatusEvent>().deserializer(),
         )
 
-        inputTopic.pipeInput(fnr, erSkjermet)
+        inputTopic.pipeInput(fnr, erSkjermet.toString())
 
         val outputEvent = outputTopic.readKeyValue()
         outputEvent.key shouldBe fnr

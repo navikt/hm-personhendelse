@@ -11,15 +11,14 @@ import org.apache.kafka.streams.kstream.Produced
 
 fun StreamsBuilder.skjermedePersonerStatus() {
     val stringSerde = Serdes.String()
-    val booleanSerde = Serdes.Boolean()
 
     this
         .stream(
             Configuration.SKJERMEDE_PERSONER_STATUS_TOPIC,
-            Consumed.with(stringSerde, booleanSerde)
+            Consumed.with(stringSerde, stringSerde)
         )
         .map { fnr, erSkjermet ->
-            val event = skjermedePersonerStatusProcessor(fnr.toFødselsnummer(), erSkjermet)
+            val event = skjermedePersonerStatusProcessor(fnr.toFødselsnummer(), erSkjermet.toBoolean())
             KeyValue.pair(fnr, event)
         }
         .to(Configuration.KAFKA_RAPID_TOPIC, Produced.with(stringSerde, jsonSerde()))
