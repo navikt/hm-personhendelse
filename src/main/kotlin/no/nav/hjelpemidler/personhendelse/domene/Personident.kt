@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.personhendelse.domain
+package no.nav.hjelpemidler.personhendelse.domene
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
@@ -9,8 +9,8 @@ sealed interface Personident {
 }
 
 fun String.toPersonident(): Personident = when {
-    AktørId.isValid(this) -> AktørId(this)
-    Fødselsnummer.isValid(this) -> Fødselsnummer(this)
+    AktørId.isValid(this) -> toAktørId()
+    Fødselsnummer.isValid(this) -> toFødselsnummer()
     else -> Ukjent(this)
 }
 

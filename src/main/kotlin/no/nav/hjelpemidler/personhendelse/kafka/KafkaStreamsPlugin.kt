@@ -28,12 +28,12 @@ val KafkaStreamsPlugin = createApplicationPlugin("KafkaStreamsPlugin", ::KafkaSt
     on(MonitoringEvent(ApplicationStarted)) { _ ->
         kafkaStreams.cleanUp()
         kafkaStreams.start()
-        log.info { "KafkaStreams startet" }
+        log.info { "Kafka Streams startet" }
     }
 
     on(MonitoringEvent(ApplicationStopped)) { _ ->
         kafkaStreams.close()
-        log.info { "KafkaStreams stoppet" }
+        log.info { "Kafka Streams stoppet" }
         application.environment.monitor.unsubscribe(ApplicationStarted) {}
         application.environment.monitor.unsubscribe(ApplicationStopped) {}
     }

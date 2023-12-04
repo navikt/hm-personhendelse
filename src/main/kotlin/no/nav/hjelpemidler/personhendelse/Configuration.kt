@@ -12,6 +12,7 @@ import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.streams.StreamsConfig
+import org.apache.kafka.streams.kstream.Materialized.StoreType
 
 object Configuration {
     val HTTP_PORT by environmentVariable<Int>()
@@ -50,5 +51,6 @@ object Configuration {
         mapOf(
             StreamsConfig.APPLICATION_ID_CONFIG to KAFKA_APPLICATION_ID,
             StreamsConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
+            StreamsConfig.DEFAULT_DSL_STORE_CONFIG to StoreType.IN_MEMORY.toString(),
         ) + kafkaSecurityConfiguration()
 }

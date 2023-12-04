@@ -14,7 +14,8 @@ import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
 import no.nav.hjelpemidler.personhendelse.kafka.KafkaStreamsPlugin
 import no.nav.hjelpemidler.personhendelse.kafka.kafkaStreams
-import no.nav.hjelpemidler.personhendelse.skjerming.skjermedePersonerStatus
+import no.nav.hjelpemidler.personhendelse.leesah.personhendelse
+import no.nav.hjelpemidler.personhendelse.skjerming.skjermetPersonStatus
 
 fun main() {
     embeddedServer(Netty, Configuration.HTTP_PORT, module = Application::main).start()
@@ -27,8 +28,8 @@ fun Application.main() {
     }
 
     val kafkaStreams = kafkaStreams {
-        // leesah()
-        skjermedePersonerStatus()
+        personhendelse()
+        skjermetPersonStatus()
     }
     install(KafkaStreamsPlugin) {
         this.kafkaStreams = kafkaStreams

@@ -1,11 +1,10 @@
-package no.nav.hjelpemidler.personhendelse.event
+package no.nav.hjelpemidler.personhendelse.domene
 
 import java.time.Instant
 import java.util.UUID
 
-interface Event<out T : Any> {
+interface Event {
     val eventId: UUID
     val eventName: String
     val opprettet: Instant
-    val data: T
 }
