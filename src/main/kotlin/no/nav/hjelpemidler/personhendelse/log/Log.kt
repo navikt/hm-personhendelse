@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.personhendelse
+package no.nav.hjelpemidler.personhendelse.log
 
 import mu.KLogger
 import mu.KotlinLogging

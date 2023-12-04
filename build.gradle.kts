@@ -25,6 +25,7 @@ dependencies {
 
     // DigiHoT
     implementation(libs.hm.http)
+    implementation(libs.hm.contract.pdl.avro)
 
     // Logging
     implementation(libs.kotlin.logging)
@@ -34,7 +35,6 @@ dependencies {
     // Test
     testImplementation(libs.bundles.test)
     testImplementation(libs.kafka.streams.test.utils)
-    testImplementation(libs.testcontainers.kafka)
 }
 
 val javaVersion = JavaLanguageVersion.of(21)

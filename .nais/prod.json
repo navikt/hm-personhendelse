@@ -2,6 +2,6 @@
   "HTTP_PORT": "8080",
   "KAFKA_APPLICATION_ID": "hm-personhendelse-v1",
   "KAFKA_RAPID_TOPIC": "teamdigihot.hm-soknadsbehandling-v1",
-  "IDENTHENDELSE_TOPIC": "pdl.leesah-v1",
-  "SKJERMINGSHENDELSE_TOPIC": "nom.skjermede-personer-status-v1"
+  "LEESAH_TOPIC": "pdl.leesah-v1",
+  "SKJERMEDE_PERSONER_STATUS_TOPIC": "nom.skjermede-personer-status-v1"
 }

@@ -1,6 +1,5 @@
 package no.nav.hjelpemidler.personhendelse
 
-import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -13,8 +12,9 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.micrometer.prometheus.PrometheusConfig
 import io.micrometer.prometheus.PrometheusMeterRegistry
-import org.apache.kafka.common.serialization.Serdes
-import org.apache.kafka.streams.kstream.Consumed
+import no.nav.hjelpemidler.personhendelse.kafka.KafkaStreamsPlugin
+import no.nav.hjelpemidler.personhendelse.kafka.kafkaStreams
+import no.nav.hjelpemidler.personhendelse.skjerming.skjermedePersonerStatus
 
 fun main() {
     embeddedServer(Netty, Configuration.HTTP_PORT, module = Application::main).start()
@@ -26,25 +26,12 @@ fun Application.main() {
         registry = meterRegistry
     }
 
+    val kafkaStreams = kafkaStreams {
+        // leesah()
+        skjermedePersonerStatus()
+    }
     install(KafkaStreamsPlugin) {
-        topology {
-            val identhendelseStream = stream(
-                Configuration.IDENTHENDELSE_TOPIC,
-                Consumed.with(Serdes.String(), GenericAvroSerde().apply {
-                    configure(Configuration.kafkaSchemaRegistryConfiguration(), false)
-                })
-            )
-            val skjermingshendelseStream = stream(
-                Configuration.SKJERMINGSHENDELSE_TOPIC,
-                Consumed.with(Serdes.String(), Serdes.String())
-            )
-
-            identhendelseStream.foreach { key, value ->
-            }
-
-            skjermingshendelseStream.foreach { key, value ->
-            }
-        }
+        this.kafkaStreams = kafkaStreams
     }
 
     routing {

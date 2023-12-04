@@ -7,6 +7,13 @@ dependencyResolutionManagement {
         maven("https://packages.confluent.io/maven/")
         maven("https://jitpack.io")
         maven {
+            url = uri("https://maven.pkg.github.com/navikt/hm-contract-pdl-avro")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+        maven {
             url = uri("https://maven.pkg.github.com/navikt/hm-http")
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
@@ -26,7 +33,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from("no.nav.hjelpemidler:hm-katalog:0.0.60")
+            from("no.nav.hjelpemidler:hm-katalog:0.1.1")
         }
     }
 }

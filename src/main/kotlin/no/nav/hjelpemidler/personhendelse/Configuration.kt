@@ -11,15 +11,14 @@ import org.apache.kafka.clients.CommonClientConfigs
 import org.apache.kafka.common.config.SaslConfigs
 import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsConfig
 
 object Configuration {
-    val HTTP_PORT: Int by environmentVariable()
+    val HTTP_PORT by environmentVariable<Int>()
     val KAFKA_APPLICATION_ID by EnvironmentVariable
     val KAFKA_RAPID_TOPIC by EnvironmentVariable
-    val IDENTHENDELSE_TOPIC by EnvironmentVariable
-    val SKJERMINGSHENDELSE_TOPIC by EnvironmentVariable
+    val LEESAH_TOPIC by EnvironmentVariable
+    val SKJERMEDE_PERSONER_STATUS_TOPIC by EnvironmentVariable
 
     fun kafkaSecurityConfiguration(): Map<String, String> = when (Environment.current) {
         LocalEnvironment -> mapOf(
@@ -51,7 +50,5 @@ object Configuration {
         mapOf(
             StreamsConfig.APPLICATION_ID_CONFIG to KAFKA_APPLICATION_ID,
             StreamsConfig.BOOTSTRAP_SERVERS_CONFIG to bootstrapServers,
-            StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG to Serdes.String().javaClass.name,
-            StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG to Serdes.String().javaClass.name,
         ) + kafkaSecurityConfiguration()
 }
