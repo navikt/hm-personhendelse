@@ -25,9 +25,9 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
+          distribution: temurin
+          java-version: 17
+          cache: gradle
       - run: ./gradlew build --no-daemon
       - uses: navikt/digihot-deploy/actions/pre-deploy@v2
         env:
