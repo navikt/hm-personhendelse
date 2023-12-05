@@ -9,3 +9,13 @@ val Personhendelse.fnr: Fødselsnummer
         .map(String::toPersonident)
         .filterIsInstance<Fødselsnummer>()
         .first() // fixme -> burde vi hatt single() eller kan vi ha historiske, ulike verdier her?
+
+val Personhendelse.informasjon: String
+    get() = mapOf(
+        "hendelseId" to hendelseId,
+        "tidligereHendelseId" to tidligereHendelseId,
+        "opprettet" to opprettet,
+        "opplysningstype" to opplysningstype,
+        "endringstype" to endringstype,
+        "master" to master,
+    ).map { (key, value) -> "$key: $value" }.joinToString()

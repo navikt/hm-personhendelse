@@ -19,12 +19,16 @@ fun StreamsBuilder.personhendelse() {
     val stringSerde = Serdes.String()
     val personhendelseSerde = specificAvroSerde<Personhendelse>()
 
-    // legg til filter her som inkluderer hendelser vi er interessert i
+    /**
+     * Filtre som inkluderer hendelser vi er interessert i.
+     */
     val anyOfFilter = listOf(
         personhendelseAdressebeskyttelseFilter,
     ).any()
 
-    // legg til prosessorer her som skal transformere interessante personhendelser til meldinger på rapid
+    /**
+     * Prosessorer som skal transformere interessante personhendelser til meldinger på rapid.
+     */
     val processors = listOf<PersonhendelseProcessor<*>>(
         personhendelseAdressebeskyttelseProcessor,
     )
@@ -36,21 +40,8 @@ fun StreamsBuilder.personhendelse() {
         )
         .filter(anyOfFilter)
         .peek { _, personhendelse ->
-            log.info {
-                val informasjon = mapOf(
-                    "hendelseId" to personhendelse.hendelseId,
-                    "tidligereHendelseId" to personhendelse.tidligereHendelseId,
-                    "opprettet" to personhendelse.opprettet,
-                    "opplysningstype" to personhendelse.opplysningstype,
-                    "endringstype" to personhendelse.endringstype,
-                    "master" to personhendelse.master,
-                ).map { (key, value) -> "$key: $value" }.joinToString()
-
-                "Mottok personhendelse til prosessering, $informasjon"
-            }
-            secureLog.info {
-                "Mottok personhendelse til prosessering for fnr: ${personhendelse.fnr}, personidenter: ${personhendelse.personidenter}, hendelseId: ${personhendelse.hendelseId}"
-            }
+            log.info { "Mottok personhendelse til prosessering, ${personhendelse.informasjon}" }
+            secureLog.info { "Mottok personhendelse til prosessering for fnr: ${personhendelse.fnr}, personidenter: ${personhendelse.personidenter}, hendelseId: ${personhendelse.hendelseId}" }
         }
         .flatMap { _, personhendelse ->
             val fnr = personhendelse.fnr
