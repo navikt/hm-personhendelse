@@ -1,2 +1,5 @@
-FROM ghcr.io/navikt/baseimages/temurin:21
-COPY build/libs/hm-personhendelse-all.jar app.jar
+FROM gcr.io/distroless/java21-debian12:nonroot
+COPY build/libs/hm-personhendelse-all.jar /app.jar
+ENV TZ="Europe/Oslo"
+EXPOSE 8080
+CMD ["/app.jar"]
