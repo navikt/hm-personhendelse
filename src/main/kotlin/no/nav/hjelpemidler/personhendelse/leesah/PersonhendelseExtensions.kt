@@ -20,5 +20,8 @@ val Personhendelse.informasjon: String
         "master" to master,
     ).map { (key, value) -> "$key: $value" }.joinToString()
 
-val Personhendelse.behandletOpplysningstype: BehandletOpplysningstype?
+var Personhendelse.behandletOpplysningstype: BehandletOpplysningstype?
     get() = behandletOpplysningstypeOf(opplysningstype)
+    set(value) {
+        opplysningstype = value?.opplysningstype
+    }

@@ -1,12 +1,15 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
+import io.kotest.matchers.sequences.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.domene.toFødselsnummer
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
 import no.nav.hjelpemidler.personhendelse.kafka.specificAvroSerde
+import no.nav.hjelpemidler.personhendelse.test.asSequence
 import no.nav.hjelpemidler.personhendelse.test.testTopology
+import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import no.nav.person.pdl.leesah.adressebeskyttelse.Adressebeskyttelse
 import no.nav.person.pdl.leesah.adressebeskyttelse.Gradering
@@ -38,30 +41,31 @@ class PersonhendelseTopologyTest {
         val fnr = "12345678910"
 
         inputTopic.pipeInput(fnr, lagPersonhendelse(fnr) {
+            opplysningstype = "TEST_V1"
+            endringstype = Endringstype.OPPRETTET
             adressebeskyttelse = null
         })
 
-        outputTopic.isEmpty shouldBe true
+        outputTopic.asSequence().shouldBeEmpty()
     }
 
     @Test
-    fun `Skal transformere melding om adressebeskyttelse og sende svaret videre på rapid`() {
+    fun `Skal transformere melding om opprettet adressebeskyttelse og sende svaret videre på rapid`() {
         val fnr = "12345678910"
         val gradering = Gradering.STRENGT_FORTROLIG
 
         inputTopic.pipeInput(fnr, lagPersonhendelse(fnr) {
-            opplysningstype = BehandletOpplysningstype.ADRESSEBESKYTTELSE.opplysningstype
+            behandletOpplysningstype = BehandletOpplysningstype.ADRESSEBESKYTTELSE_V1
+            endringstype = Endringstype.OPPRETTET
             adressebeskyttelse = Adressebeskyttelse(gradering)
         })
 
-        val outputEvent = outputTopic.readKeyValue()
-        outputEvent.key shouldBe fnr
+        val record = outputTopic.asSequence().single()
+        record.key shouldBe fnr
 
-        val outputValue = outputEvent.value.shouldBeInstanceOf<PersonhendelseAdressebeskyttelseEvent>()
-        outputValue.fnr shouldBe fnr.toFødselsnummer()
-        outputValue.gradering shouldBe gradering
-
-        outputTopic.isEmpty shouldBe true
+        val value = record.value.shouldBeInstanceOf<PersonhendelseAdressebeskyttelseEvent>()
+        value.fnr shouldBe fnr.toFødselsnummer()
+        value.gradering shouldBe gradering
     }
 
     @Test
@@ -69,17 +73,16 @@ class PersonhendelseTopologyTest {
         val fnr = "12345678910"
 
         inputTopic.pipeInput(fnr, lagPersonhendelse(fnr) {
-            opplysningstype = BehandletOpplysningstype.ADRESSEBESKYTTELSE.opplysningstype
+            behandletOpplysningstype = BehandletOpplysningstype.ADRESSEBESKYTTELSE_V1
+            endringstype = Endringstype.ANNULLERT
             adressebeskyttelse = null
         })
 
-        val outputEvent = outputTopic.readKeyValue()
-        outputEvent.key shouldBe fnr
+        val record = outputTopic.asSequence().single()
+        record.key shouldBe fnr
 
-        val outputValue = outputEvent.value.shouldBeInstanceOf<PersonhendelseAdressebeskyttelseEvent>()
-        outputValue.fnr shouldBe fnr.toFødselsnummer()
-        outputValue.gradering shouldBe Gradering.UGRADERT
-
-        outputTopic.isEmpty shouldBe true
+        val value = record.value.shouldBeInstanceOf<PersonhendelseAdressebeskyttelseEvent>()
+        value.fnr shouldBe fnr.toFødselsnummer()
+        value.gradering shouldBe null
     }
 }
