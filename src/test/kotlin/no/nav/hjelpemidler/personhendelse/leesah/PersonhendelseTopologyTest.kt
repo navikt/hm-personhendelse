@@ -50,6 +50,7 @@ class PersonhendelseTopologyTest {
         val gradering = Gradering.STRENGT_FORTROLIG
 
         inputTopic.pipeInput(fnr, lagPersonhendelse(fnr) {
+            opplysningstype = BehandletOpplysningstype.ADRESSEBESKYTTELSE.opplysningstype
             adressebeskyttelse = Adressebeskyttelse(gradering)
         })
 
@@ -59,6 +60,25 @@ class PersonhendelseTopologyTest {
         val outputValue = outputEvent.value.shouldBeInstanceOf<PersonhendelseAdressebeskyttelseEvent>()
         outputValue.fnr shouldBe fnr.toFødselsnummer()
         outputValue.gradering shouldBe gradering
+
+        outputTopic.isEmpty shouldBe true
+    }
+
+    @Test
+    fun `Skal transformere melding om annulert adressebeskyttelse og sende svaret videre på rapid`() {
+        val fnr = "12345678910"
+
+        inputTopic.pipeInput(fnr, lagPersonhendelse(fnr) {
+            opplysningstype = BehandletOpplysningstype.ADRESSEBESKYTTELSE.opplysningstype
+            adressebeskyttelse = null
+        })
+
+        val outputEvent = outputTopic.readKeyValue()
+        outputEvent.key shouldBe fnr
+
+        val outputValue = outputEvent.value.shouldBeInstanceOf<PersonhendelseAdressebeskyttelseEvent>()
+        outputValue.fnr shouldBe fnr.toFødselsnummer()
+        outputValue.gradering shouldBe Gradering.UGRADERT
 
         outputTopic.isEmpty shouldBe true
     }

@@ -9,21 +9,28 @@ import java.time.Instant
 import java.util.UUID
 
 val personhendelseAdressebeskyttelseFilter: Predicate<String, Personhendelse> = Predicate { _, personhendelse ->
-    personhendelse.adressebeskyttelse != null
+    personhendelse.adressebeskyttelse != null || personhendelse.behandletOpplysningstype.erAdressebeskyttelse()
 }
 
 val personhendelseAdressebeskyttelseProcessor: PersonhendelseProcessor<PersonhendelseAdressebeskyttelseEvent?> =
     PersonhendelseProcessor { fnr, personhendelse ->
-        val adressebeskyttelse = personhendelse.adressebeskyttelse ?: return@PersonhendelseProcessor null
-        PersonhendelseAdressebeskyttelseEvent(
-            hendelseId = personhendelse.hendelseId,
-            tidligereHendelseId = personhendelse.tidligereHendelseId,
-            opplysningstype = personhendelse.opplysningstype,
-            endringstype = personhendelse.endringstype,
-            opprettet = personhendelse.opprettet,
-            fnr = fnr,
-            gradering = adressebeskyttelse.gradering,
-        )
+        val adressebeskyttelse = personhendelse.adressebeskyttelse
+        when {
+            adressebeskyttelse == null && personhendelse.behandletOpplysningstype.erAdressebeskyttelse() ->
+                PersonhendelseAdressebeskyttelseEvent(
+                    personhendelse = personhendelse,
+                    fnr = fnr,
+                    gradering = Gradering.UGRADERT,
+                )
+
+            adressebeskyttelse != null -> PersonhendelseAdressebeskyttelseEvent(
+                personhendelse = personhendelse,
+                fnr = fnr,
+                gradering = adressebeskyttelse.gradering,
+            )
+
+            else -> null
+        }
     }
 
 data class PersonhendelseAdressebeskyttelseEvent(
@@ -37,4 +44,14 @@ data class PersonhendelseAdressebeskyttelseEvent(
 ) : PersonhendelseEvent {
     override val eventId: UUID = UUID.randomUUID()
     override val eventName: String = "hm-personhendelse-adressebeskyttelse"
+
+    constructor(personhendelse: Personhendelse, fnr: Fødselsnummer, gradering: Gradering) : this(
+        hendelseId = personhendelse.hendelseId,
+        tidligereHendelseId = personhendelse.tidligereHendelseId,
+        opplysningstype = personhendelse.opplysningstype,
+        endringstype = personhendelse.endringstype,
+        opprettet = personhendelse.opprettet,
+        fnr = fnr,
+        gradering = gradering
+    )
 }

@@ -19,3 +19,6 @@ val Personhendelse.informasjon: String
         "endringstype" to endringstype,
         "master" to master,
     ).map { (key, value) -> "$key: $value" }.joinToString()
+
+val Personhendelse.behandletOpplysningstype: BehandletOpplysningstype?
+    get() = behandletOpplysningstypeOf(opplysningstype)
