@@ -5,6 +5,7 @@ import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.kafka.any
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
 import no.nav.hjelpemidler.personhendelse.kafka.specificAvroSerde
+import no.nav.hjelpemidler.personhendelse.log.secureLog
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.KeyValue
@@ -46,6 +47,9 @@ fun StreamsBuilder.personhendelse() {
                 ).map { (key, value) -> "$key: $value" }.joinToString()
 
                 "Mottok personhendelse til prosessering, $informasjon"
+            }
+            secureLog.info {
+                "Mottok personhendelse til prosessering for fnr: ${personhendelse.fnr}, personidenter: ${personhendelse.personidenter}, hendelseId: ${personhendelse.hendelseId}"
             }
         }
         .flatMap { _, personhendelse ->
