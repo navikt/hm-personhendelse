@@ -34,6 +34,10 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             from("no.nav.hjelpemidler:hm-katalog:0.1.2")
+            version(
+                "confluent",
+                "7.5.1"
+            ) // pga. https://nav-it.slack.com/archives/C84H68ESC/p1700733466530099?thread_ts=1700556875.004519&cid=C84H68ESC
         }
     }
 }
