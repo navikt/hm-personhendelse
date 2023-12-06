@@ -1,5 +1,8 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
+/**
+ * Inneholder opplysningstyper som vi vil behandler videre.
+ */
 enum class BehandletOpplysningstype(val opplysningstype: String) {
     ADRESSEBESKYTTELSE_V1("ADRESSEBESKYTTELSE_V1"),
     ;
