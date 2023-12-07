@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler.personhendelse.kafka
 
 import io.ktor.events.EventDefinition
+import io.ktor.events.EventHandler
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.ApplicationStopped
@@ -26,12 +27,12 @@ val KafkaStreamsPlugin = createApplicationPlugin("KafkaStreamsPlugin", ::KafkaSt
         )
     }
 
-    val started: (Application) -> Unit = { _ ->
+    val started: EventHandler<Application> = { _ ->
         kafkaStreams.cleanUp()
         kafkaStreams.start()
         log.info { "Kafka Streams startet" }
     }
-    var stopped: (Application) -> Unit = {}
+    var stopped: EventHandler<Application> = {}
     stopped = { _ ->
         kafkaStreams.close()
         log.info { "Kafka Streams stoppet" }
