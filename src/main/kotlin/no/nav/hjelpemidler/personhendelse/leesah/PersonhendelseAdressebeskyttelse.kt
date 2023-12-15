@@ -52,6 +52,6 @@ data class PersonhendelseAdressebeskyttelseEvent(
         endringstype = personhendelse.endringstype,
         opprettet = personhendelse.opprettet,
         fnr = fnr,
-        gradering = gradering
+        gradering = gradering,
     )
 }

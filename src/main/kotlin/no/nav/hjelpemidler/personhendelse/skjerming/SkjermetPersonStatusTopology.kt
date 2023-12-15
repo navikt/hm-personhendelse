@@ -1,6 +1,8 @@
 package no.nav.hjelpemidler.personhendelse.skjerming
 
 import mu.KotlinLogging
+import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.configuration.GcpEnvironment
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.domene.toFødselsnummer
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
@@ -17,7 +19,7 @@ fun StreamsBuilder.skjermetPersonStatus() {
     val stringSerde = Serdes.String()
     val skjermetPersonStatusEventSerde = jsonSerde<SkjermetPersonStatusEvent>()
 
-    this
+    val stream = this
         .stream(
             Configuration.SKJERMEDE_PERSONER_STATUS_TOPIC,
             Consumed.with(stringSerde, stringSerde)
@@ -30,8 +32,12 @@ fun StreamsBuilder.skjermetPersonStatus() {
             val event = skjermetPersonStatusProcessor(fnr.toFødselsnummer(), erSkjermet.toBoolean())
             KeyValue.pair(fnr, event)
         }
-        .to(
-            Configuration.KAFKA_RAPID_TOPIC,
-            Produced.with(stringSerde, skjermetPersonStatusEventSerde),
-        )
+
+    if (Environment.current != GcpEnvironment.PROD) {
+        stream
+            .to(
+                Configuration.KAFKA_RAPID_TOPIC,
+                Produced.with(stringSerde, skjermetPersonStatusEventSerde),
+            )
+    }
 }

@@ -1,6 +1,8 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
 import mu.KotlinLogging
+import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.configuration.GcpEnvironment
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.kafka.any
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
@@ -33,7 +35,7 @@ fun StreamsBuilder.personhendelse() {
         personhendelseAdressebeskyttelseProcessor,
     )
 
-    this
+    val stream = this
         .stream(
             Configuration.LEESAH_TOPIC,
             Consumed.with(stringSerde, personhendelseSerde)
@@ -49,8 +51,12 @@ fun StreamsBuilder.personhendelse() {
                 .mapNotNull { processor -> processor(fnr, personhendelse) }
                 .map { event -> KeyValue.pair(fnr.toString(), event) }
         }
-        .to(
-            Configuration.KAFKA_RAPID_TOPIC,
-            Produced.with(stringSerde, jsonSerde()),
-        )
+
+    if (Environment.current != GcpEnvironment.PROD) {
+        stream
+            .to(
+                Configuration.KAFKA_RAPID_TOPIC,
+                Produced.with(stringSerde, jsonSerde()),
+            )
+    }
 }

@@ -33,7 +33,7 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from("no.nav.hjelpemidler:hm-katalog:0.1.2")
+            from("no.nav.hjelpemidler:hm-katalog:0.1.9")
             version(
                 "confluent",
                 "7.5.1"
