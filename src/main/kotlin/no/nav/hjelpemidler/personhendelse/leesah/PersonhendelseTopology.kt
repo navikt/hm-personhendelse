@@ -7,10 +7,10 @@ import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.kafka.any
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
 import no.nav.hjelpemidler.personhendelse.kafka.specificAvroSerde
+import no.nav.hjelpemidler.personhendelse.kafka.withValue
 import no.nav.hjelpemidler.personhendelse.log.secureLog
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.common.serialization.Serdes
-import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
 import org.apache.kafka.streams.kstream.Produced
@@ -42,14 +42,14 @@ fun StreamsBuilder.personhendelse() {
         )
         .filter(anyOfFilter)
         .peek { _, personhendelse ->
-            log.info { "Mottok personhendelse til prosessering, ${personhendelse.informasjon}" }
+            log.info { "Mottok personhendelse til prosessering, ${personhendelse.sammendrag}" }
             secureLog.info { "Mottok personhendelse til prosessering for fnr: ${personhendelse.fnr}, personidenter: ${personhendelse.personidenter}, hendelseId: ${personhendelse.hendelseId}" }
         }
         .flatMap { _, personhendelse ->
             val fnr = personhendelse.fnr
             processors
                 .mapNotNull { processor -> processor(fnr, personhendelse) }
-                .map { event -> KeyValue.pair(fnr.toString(), event) }
+                .map { event -> fnr.toString() withValue event }
         }
 
     if (Environment.current != GcpEnvironment.PROD) {

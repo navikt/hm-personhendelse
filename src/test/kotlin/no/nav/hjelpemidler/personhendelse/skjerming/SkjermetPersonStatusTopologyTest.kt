@@ -1,5 +1,6 @@
 package no.nav.hjelpemidler.personhendelse.skjerming
 
+import io.kotest.matchers.sequences.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.domene.toFødselsnummer
@@ -30,16 +31,26 @@ class SkjermetPersonStatusTopologyTest {
 
     @Test
     fun `Skal transformere melding om skjermet person og sende svaret videre på rapid`() {
-        val fnr = "12345678910"
-        val erSkjermet = true
+        val personId = "12345678910"
+        val skjermet = true
 
-        inputTopic.pipeInput(fnr, erSkjermet.toString())
+        inputTopic.pipeInput(personId, skjermet.toString())
 
         val record = outputTopic.asSequence().single()
-        record.key shouldBe fnr
+        record.key shouldBe personId
 
         val value = record.value
-        value.fnr shouldBe fnr.toFødselsnummer()
-        value.erSkjermet shouldBe erSkjermet
+        value.fnr shouldBe personId.toFødselsnummer()
+        value.skjermet shouldBe skjermet
+    }
+
+    @Test
+    fun `Skal ignorere melding om skjermet person som ikke har fnr som nøkkel`() {
+        val personId = "19901220ABC"
+        val skjermet = true
+
+        inputTopic.pipeInput(personId, skjermet.toString())
+
+        outputTopic.asSequence().shouldBeEmpty()
     }
 }

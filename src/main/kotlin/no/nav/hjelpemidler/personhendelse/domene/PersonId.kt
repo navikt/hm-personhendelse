@@ -3,22 +3,22 @@ package no.nav.hjelpemidler.personhendelse.domene
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
 
-sealed interface Personident {
+sealed interface PersonId {
     @get:JsonValue
     val value: String
 }
 
-fun String.toPersonident(): Personident = when {
+fun String.toPersonId(): PersonId = when {
     AktørId.isValid(this) -> toAktørId()
     Fødselsnummer.isValid(this) -> toFødselsnummer()
-    else -> Ukjent(this)
+    else -> Annen(this)
 }
 
-data class Ukjent @JsonCreator constructor(override val value: String) : Personident {
+data class Annen @JsonCreator constructor(override val value: String) : PersonId {
     override fun toString(): String = value
 }
 
-data class AktørId @JsonCreator constructor(override val value: String) : Personident {
+data class AktørId @JsonCreator constructor(override val value: String) : PersonId {
     init {
         require(isValid(value)) { "$value er ugyldig" }
     }
@@ -33,7 +33,10 @@ data class AktørId @JsonCreator constructor(override val value: String) : Perso
 
 fun String.toAktørId(): AktørId = AktørId(this)
 
-data class Fødselsnummer @JsonCreator constructor(override val value: String) : Personident {
+/**
+ * NB! Kan også være D-nummer.
+ */
+data class Fødselsnummer @JsonCreator constructor(override val value: String) : PersonId {
     init {
         require(isValid(value)) { "$value er ugyldig" }
     }

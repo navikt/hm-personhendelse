@@ -2,6 +2,7 @@ package no.nav.hjelpemidler.personhendelse.kafka
 
 import no.nav.hjelpemidler.personhendelse.Configuration
 import org.apache.kafka.streams.KafkaStreams
+import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.kstream.Predicate
@@ -29,3 +30,7 @@ fun <K, V> not(target: Predicate<in K, in V>): Predicate<in K, in V> = target.ne
 fun <K, V> Collection<Predicate<K, V>>.any(): Predicate<K, V> = reduce(Predicate<K, V>::or)
 
 fun <K, V> Collection<Predicate<K, V>>.all(): Predicate<K, V> = reduce(Predicate<K, V>::and)
+
+infix fun <K, V> V.withKey(key: K): KeyValue<K, V> = KeyValue.pair(key, this)
+
+infix fun <K, V> K.withValue(value: V): KeyValue<K, V> = KeyValue.pair(this, value)

@@ -4,11 +4,12 @@ import mu.KotlinLogging
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.configuration.GcpEnvironment
 import no.nav.hjelpemidler.personhendelse.Configuration
-import no.nav.hjelpemidler.personhendelse.domene.toFødselsnummer
+import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
+import no.nav.hjelpemidler.personhendelse.domene.toPersonId
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
+import no.nav.hjelpemidler.personhendelse.kafka.withValue
 import no.nav.hjelpemidler.personhendelse.log.secureLog
 import org.apache.kafka.common.serialization.Serdes
-import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
 import org.apache.kafka.streams.kstream.Produced
@@ -24,13 +25,18 @@ fun StreamsBuilder.skjermetPersonStatus() {
             Configuration.SKJERMEDE_PERSONER_STATUS_TOPIC,
             Consumed.with(stringSerde, stringSerde)
         )
-        .peek { fnr, erSkjermet ->
-            log.info { "Mottok melding om skjermet person" }
-            secureLog.info { "Mottok melding om skjermet person, fnr: $fnr, erSkjermet: $erSkjermet" }
+        .map { personId, skjermet ->
+            personId.toPersonId() withValue skjermet.toBoolean()
         }
-        .map { fnr, erSkjermet ->
-            val event = skjermetPersonStatusProcessor(fnr.toFødselsnummer(), erSkjermet.toBoolean())
-            KeyValue.pair(fnr, event)
+        .peek { personId, skjermet ->
+            log.info { "Mottok melding om skjermet person" }
+            secureLog.info { "Mottok melding om skjermet person, personId: $personId, skjermet: $skjermet" }
+        }
+        .filter(skjermetPersonStatusFilter)
+        .selectKey { personId, _ -> personId as Fødselsnummer }
+        .map { fnr, skjermet ->
+            val event = skjermetPersonStatusProcessor(fnr, skjermet)
+            fnr.toString() withValue event
         }
 
     if (Environment.current != GcpEnvironment.PROD) {
