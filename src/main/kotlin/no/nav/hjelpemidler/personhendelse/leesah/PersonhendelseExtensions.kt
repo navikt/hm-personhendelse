@@ -4,6 +4,12 @@ import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
 import no.nav.hjelpemidler.personhendelse.domene.toPersonId
 import no.nav.person.pdl.leesah.Personhendelse
 
+val Personhendelse.harFnr: Boolean
+    get() = personidenter
+        .map(String::toPersonId)
+        .filterIsInstance<Fødselsnummer>()
+        .isNotEmpty()
+
 val Personhendelse.fnr: Fødselsnummer
     get() = personidenter
         .map(String::toPersonId)

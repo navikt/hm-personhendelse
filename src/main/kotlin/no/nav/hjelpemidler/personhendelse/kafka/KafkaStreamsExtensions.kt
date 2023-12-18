@@ -5,7 +5,9 @@ import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
+import org.apache.kafka.streams.kstream.KStream
 import org.apache.kafka.streams.kstream.Predicate
+import org.apache.kafka.streams.kstream.Produced
 
 fun topology(block: StreamsBuilder.() -> Unit): Topology = StreamsBuilder().apply(block).build()
 
@@ -34,3 +36,13 @@ fun <K, V> Collection<Predicate<K, V>>.all(): Predicate<K, V> = reduce(Predicate
 infix fun <K, V> V.withKey(key: K): KeyValue<K, V> = KeyValue.pair(key, this)
 
 infix fun <K, V> K.withValue(value: V): KeyValue<K, V> = KeyValue.pair(this, value)
+
+fun <K, V> KStream<K, V>.toIf(
+    condition: Boolean,
+    topic: String,
+    produced: Produced<K, V>
+) {
+    if (condition) {
+        to(topic, produced)
+    }
+}

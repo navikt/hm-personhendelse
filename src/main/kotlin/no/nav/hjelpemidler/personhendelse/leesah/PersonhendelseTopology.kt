@@ -7,11 +7,13 @@ import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.kafka.any
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
 import no.nav.hjelpemidler.personhendelse.kafka.specificAvroSerde
-import no.nav.hjelpemidler.personhendelse.kafka.withValue
+import no.nav.hjelpemidler.personhendelse.kafka.toIf
+import no.nav.hjelpemidler.personhendelse.kafka.withKey
 import no.nav.hjelpemidler.personhendelse.log.secureLog
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.common.serialization.Serdes
 import org.apache.kafka.streams.StreamsBuilder
+import org.apache.kafka.streams.kstream.Branched
 import org.apache.kafka.streams.kstream.Consumed
 import org.apache.kafka.streams.kstream.Produced
 
@@ -26,37 +28,51 @@ fun StreamsBuilder.personhendelse() {
      */
     val anyOfFilter = listOf(
         personhendelseAdressebeskyttelseFilter,
+        personhendelseDødsfallFilter,
     ).any()
 
-    /**
-     * Prosessorer som skal transformere interessante personhendelser til meldinger på rapid.
-     */
-    val processors = listOf<PersonhendelseProcessor<*>>(
-        personhendelseAdressebeskyttelseProcessor,
-    )
-
-    val stream = this
+    this
         .stream(
             Configuration.LEESAH_TOPIC,
             Consumed.with(stringSerde, personhendelseSerde)
         )
+        .filter { _, personhendelse -> personhendelse.harFnr }
+        .selectKey { _, personhendelse -> personhendelse.fnr }
         .filter(anyOfFilter)
         .peek { _, personhendelse ->
             log.info { "Mottok personhendelse til prosessering, ${personhendelse.sammendrag}" }
             secureLog.info { "Mottok personhendelse til prosessering for fnr: ${personhendelse.fnr}, personidenter: ${personhendelse.personidenter}, hendelseId: ${personhendelse.hendelseId}" }
         }
-        .flatMap { _, personhendelse ->
-            val fnr = personhendelse.fnr
-            processors
-                .mapNotNull { processor -> processor(fnr, personhendelse) }
-                .map { event -> fnr.toString() withValue event }
-        }
-
-    if (Environment.current != GcpEnvironment.PROD) {
-        stream
-            .to(
-                Configuration.KAFKA_RAPID_TOPIC,
-                Produced.with(stringSerde, jsonSerde()),
-            )
-    }
+        .split()
+        .branch(
+            personhendelseAdressebeskyttelseFilter,
+            Branched.withConsumer { branch ->
+                branch
+                    .map { fnr, personhendelse ->
+                        val event = personhendelseAdressebeskyttelseProcessor(fnr, personhendelse)
+                        event withKey fnr.toString()
+                    }
+                    .toIf(
+                        Environment.current != GcpEnvironment.PROD,
+                        Configuration.KAFKA_RAPID_TOPIC,
+                        Produced.with(stringSerde, jsonSerde()),
+                    )
+            },
+        )
+        .branch(
+            personhendelseDødsfallFilter,
+            Branched.withConsumer { branch ->
+                branch
+                    .map { fnr, personhendelse ->
+                        val event = personhendelseDødsfallProcessor(fnr, personhendelse)
+                        event withKey fnr.toString()
+                    }
+                    .toIf(
+                        Environment.current != GcpEnvironment.PROD,
+                        Configuration.KAFKA_RAPID_TOPIC,
+                        Produced.with(stringSerde, jsonSerde()),
+                    )
+            },
+        )
+        .noDefaultBranch()
 }

@@ -7,6 +7,7 @@ import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
 import no.nav.hjelpemidler.personhendelse.domene.toPersonId
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
+import no.nav.hjelpemidler.personhendelse.kafka.toIf
 import no.nav.hjelpemidler.personhendelse.kafka.withValue
 import no.nav.hjelpemidler.personhendelse.log.secureLog
 import org.apache.kafka.common.serialization.Serdes
@@ -20,7 +21,7 @@ fun StreamsBuilder.skjermetPersonStatus() {
     val stringSerde = Serdes.String()
     val skjermetPersonStatusEventSerde = jsonSerde<SkjermetPersonStatusEvent>()
 
-    val stream = this
+    this
         .stream(
             Configuration.SKJERMEDE_PERSONER_STATUS_TOPIC,
             Consumed.with(stringSerde, stringSerde)
@@ -38,12 +39,9 @@ fun StreamsBuilder.skjermetPersonStatus() {
             val event = skjermetPersonStatusProcessor(fnr, skjermet)
             fnr.toString() withValue event
         }
-
-    if (Environment.current != GcpEnvironment.PROD) {
-        stream
-            .to(
-                Configuration.KAFKA_RAPID_TOPIC,
-                Produced.with(stringSerde, skjermetPersonStatusEventSerde),
-            )
-    }
+        .toIf(
+            Environment.current != GcpEnvironment.PROD,
+            Configuration.KAFKA_RAPID_TOPIC,
+            Produced.with(stringSerde, skjermetPersonStatusEventSerde),
+        )
 }
