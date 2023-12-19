@@ -1,12 +1,14 @@
 package no.nav.hjelpemidler.personhendelse.kafka
 
+import no.nav.hjelpemidler.configuration.Environment
+import no.nav.hjelpemidler.configuration.GcpEnvironment
 import no.nav.hjelpemidler.personhendelse.Configuration
+import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.kstream.KStream
-import org.apache.kafka.streams.kstream.Predicate
 import org.apache.kafka.streams.kstream.Produced
 
 fun topology(block: StreamsBuilder.() -> Unit): Topology = StreamsBuilder().apply(block).build()
@@ -16,33 +18,10 @@ fun kafkaStreams(
     block: StreamsBuilder.() -> Unit,
 ): KafkaStreams = KafkaStreams(topology(block), configuration.toProperties())
 
-operator fun <K, V> Predicate<in K, in V>.invoke(key: K, value: V): Boolean = test(key, value)
-
-infix fun <K, V> Predicate<in K, in V>.and(other: Predicate<in K, in V>): Predicate<K, V> =
-    Predicate { key, value -> this(key, value) && other(key, value) }
-
-fun <K, V> Predicate<in K, in V>.negate(): Predicate<K, V> =
-    Predicate { key, value -> !this(key, value) }
-
-infix fun <K, V> Predicate<in K, in V>.or(other: Predicate<in K, in V>): Predicate<K, V> =
-    Predicate { key, value -> this(key, value) || other(key, value) }
-
-fun <K, V> not(target: Predicate<in K, in V>): Predicate<in K, in V> = target.negate()
-
-fun <K, V> Collection<Predicate<K, V>>.any(): Predicate<K, V> = reduce(Predicate<K, V>::or)
-
-fun <K, V> Collection<Predicate<K, V>>.all(): Predicate<K, V> = reduce(Predicate<K, V>::and)
-
-infix fun <K, V> V.withKey(key: K): KeyValue<K, V> = KeyValue.pair(key, this)
-
 infix fun <K, V> K.withValue(value: V): KeyValue<K, V> = KeyValue.pair(this, value)
 
-fun <K, V> KStream<K, V>.toIf(
-    condition: Boolean,
-    topic: String,
-    produced: Produced<K, V>
-) {
-    if (condition) {
-        to(topic, produced)
+inline fun <reified T> KStream<Fødselsnummer, T>.toRapid() {
+    if (Environment.current != GcpEnvironment.PROD) {
+        to(Configuration.KAFKA_RAPID_TOPIC, Produced.with(fødselsnummerSerde, jsonSerde<T>()))
     }
 }

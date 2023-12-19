@@ -5,7 +5,8 @@ og publiserer meldinger videre på DigiHoTs rapid. Appen er implementert med Kaf
 
 ```mermaid
 flowchart TD
-    pdl.leesah-v1 --> hm-personhendelse
-    nom.skjermede-personer-status-v1 --> hm-personhendelse
-    hm-personhendelse --> rapid
+    pdl.leesah-v1 --> ADRESSEBESKYTTELSE_V1 --> hm-personhendelse
+    pdl.leesah-v1 --> DOEDSFALL_V1 --> hm-personhendelse
+    nom.skjermede-personer-status-v1 --> id1[FNR / Boolean] --> hm-personhendelse
+    hm-personhendelse --> teamdigihot.hm-soknadsbehandling-v1
 ```

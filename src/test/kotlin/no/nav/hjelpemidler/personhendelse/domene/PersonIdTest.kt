@@ -5,17 +5,17 @@ import kotlin.test.Test
 
 class PersonIdTest {
     @Test
-    fun `Skal gjøre om tekst til aktørId`() {
+    fun `Skal gjøre om tekst til AktørId`() {
         "1234567891011".toPersonId().shouldBeInstanceOf<AktørId>()
     }
 
     @Test
-    fun `Skal gjøre om tekst til fødselsnummer`() {
+    fun `Skal gjøre om tekst til Fødselsnummer`() {
         "12345678910".toPersonId().shouldBeInstanceOf<Fødselsnummer>()
     }
 
     @Test
-    fun `Skal gjøre om tekst til ukjent`() {
+    fun `Skal gjøre om tekst til Annen`() {
         "123456789".toPersonId().shouldBeInstanceOf<Annen>()
     }
 }

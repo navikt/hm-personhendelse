@@ -1,57 +1,44 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
 import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
+import no.nav.hjelpemidler.personhendelse.kafka.toRapid
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
-import org.apache.kafka.streams.kstream.Predicate
+import org.apache.kafka.streams.kstream.Branched
 import java.time.Instant
 import java.time.LocalDate
 import java.util.UUID
 
-val personhendelseDødsfallFilter: Predicate<Fødselsnummer, Personhendelse> = Predicate { _, personhendelse ->
-    personhendelse.behandletOpplysningstype.erDødsfall()
-}
-
-val personhendelseDødsfallProcessor: PersonhendelseProcessor<PersonhendelseDødsfallEvent?> =
-    PersonhendelseProcessor { fnr, personhendelse ->
-        when (val endringstype = personhendelse.endringstype) {
-            Endringstype.OPPRETTET,
-            Endringstype.KORRIGERT -> PersonhendelseDødsfallEvent(
-                personhendelse = personhendelse,
-                fnr = fnr,
-                dødsdato = personhendelse.doedsfall.doedsdato
-            )
-
-            Endringstype.ANNULLERT,
-            Endringstype.OPPHOERT -> PersonhendelseDødsfallEvent(
-                personhendelse = personhendelse,
-                fnr = fnr,
-                dødsdato = null,
-            )
-
-            else -> error("Ukjent endringstype: $endringstype")
-        }
-    }
+fun PersonhendelseBranchedStream.dødsfall(): PersonhendelseBranchedStream = branch(
+    behandletOpplysningstypeFilter(BehandletOpplysningstype.DØDSFALL_V1),
+    Branched.withConsumer { stream ->
+        stream
+            .log()
+            .mapValues(::PersonhendelseDødsfallEvent)
+            .toRapid()
+    },
+)
 
 data class PersonhendelseDødsfallEvent(
-    override val hendelseId: String,
-    override val tidligereHendelseId: String?,
-    override val opplysningstype: String,
-    override val endringstype: Endringstype,
-    override val opprettet: Instant,
+    override val kilde: PersonhendelseEvent.Kilde,
     val fnr: Fødselsnummer,
     val dødsdato: LocalDate?,
 ) : PersonhendelseEvent {
     override val eventId: UUID = UUID.randomUUID()
     override val eventName: String = "hm-personhendelse-dødsfall"
+    override val opprettet: Instant = Instant.now()
 
-    constructor(personhendelse: Personhendelse, fnr: Fødselsnummer, dødsdato: LocalDate?) : this(
-        hendelseId = personhendelse.hendelseId,
-        tidligereHendelseId = personhendelse.tidligereHendelseId,
-        opplysningstype = personhendelse.opplysningstype,
-        endringstype = personhendelse.endringstype,
-        opprettet = personhendelse.opprettet,
+    constructor(fnr: Fødselsnummer, personhendelse: Personhendelse) : this(
+        kilde = PersonhendelseEvent.Kilde(personhendelse),
         fnr = fnr,
-        dødsdato = dødsdato,
+        dødsdato = when (val endringstype = personhendelse.endringstype) {
+            Endringstype.OPPRETTET,
+            Endringstype.KORRIGERT -> personhendelse.doedsfall.doedsdato
+
+            Endringstype.ANNULLERT,
+            Endringstype.OPPHOERT -> null
+
+            else -> error("Ukjent endringstype: $endringstype")
+        },
     )
 }

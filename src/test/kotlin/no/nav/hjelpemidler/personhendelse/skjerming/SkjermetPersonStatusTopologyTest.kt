@@ -5,13 +5,12 @@ import io.kotest.matchers.shouldBe
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.domene.toFødselsnummer
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
+import no.nav.hjelpemidler.personhendelse.kafka.stringSerde
 import no.nav.hjelpemidler.personhendelse.test.asSequence
 import no.nav.hjelpemidler.personhendelse.test.testTopology
-import org.apache.kafka.common.serialization.Serdes
 import kotlin.test.Test
 
 class SkjermetPersonStatusTopologyTest {
-    private val stringSerde = Serdes.String()
     private val skjermetPersonStatusEventSerde = jsonSerde<SkjermetPersonStatusEvent>()
 
     private val driver = testTopology {
