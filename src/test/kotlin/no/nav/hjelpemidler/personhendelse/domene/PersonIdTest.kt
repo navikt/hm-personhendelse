@@ -16,6 +16,6 @@ class PersonIdTest {
 
     @Test
     fun `Skal gjøre om tekst til Annen`() {
-        "123456789".toPersonId().shouldBeInstanceOf<Annen>()
+        "19901020ABC".toPersonId().shouldBeInstanceOf<Annen>()
     }
 }

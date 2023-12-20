@@ -29,7 +29,7 @@ data class PersonhendelseAdressebeskyttelseEvent(
     override val opprettet: Instant = Instant.now()
 
     constructor(fnr: Fødselsnummer, personhendelse: Personhendelse) : this(
-        kilde = PersonhendelseEvent.Kilde(personhendelse),
+        kilde = personhendelse.kilde,
         fnr = fnr,
         gradering = when (val endringstype = personhendelse.endringstype) {
             Endringstype.OPPRETTET,

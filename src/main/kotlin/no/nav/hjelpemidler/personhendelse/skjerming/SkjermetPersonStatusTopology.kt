@@ -24,11 +24,11 @@ fun StreamsBuilder.skjermetPersonStatus(): Unit = this
         secureLog.info { "Mottok melding om skjermet person, personId: $personId, skjermet: $skjermet" }
     }
     .filter { personId, skjermet ->
-        val fnr = personId is Fødselsnummer
-        if (!fnr) {
-            secureLog.info { "Ignorerer personId: $personId, ikke fnr, skjermet: $skjermet" }
+        val harFnr = personId is Fødselsnummer
+        if (!harFnr) {
+            secureLog.info { "Ignorerer personId: $personId, mangler fnr, skjermet: $skjermet" }
         }
-        fnr
+        harFnr
     }
     .selectKey { personId, _ -> personId as Fødselsnummer }
     .mapValues(::SkjermetPersonStatusEvent)
