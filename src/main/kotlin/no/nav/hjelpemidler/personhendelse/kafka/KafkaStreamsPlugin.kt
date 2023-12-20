@@ -44,8 +44,10 @@ val KafkaStreamsPlugin = createApplicationPlugin("KafkaStreamsPlugin", ::KafkaSt
     on(MonitoringEvent(ApplicationStopped), stopped)
 
     onCall { _ ->
-        val state = kafkaStreams.state()
-        log.info { "state: $state" }
+        when (val state = kafkaStreams.state()) {
+            State.RUNNING -> log.debug { "state: $state" }
+            else -> log.info { "state: $state" }
+        }
     }
 }
 
