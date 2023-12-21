@@ -17,7 +17,7 @@ jobs:
     permissions:
       contents: write # The Dependency Submission API requires write permission
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Run snapshot action
         uses: mikepenz/gradle-dependency-submission@v0.9.1
         with:
