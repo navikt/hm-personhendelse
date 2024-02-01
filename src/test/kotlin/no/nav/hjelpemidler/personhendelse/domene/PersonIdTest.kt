@@ -11,7 +11,7 @@ class PersonIdTest {
 
     @Test
     fun `Skal gjøre om tekst til Fødselsnummer`() {
-        "12345678910".toPersonId().shouldBeInstanceOf<Fødselsnummer>()
+        "01028493807".toPersonId().shouldBeInstanceOf<Fødselsnummer>()
     }
 
     @Test

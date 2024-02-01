@@ -3,7 +3,7 @@ package no.nav.hjelpemidler.personhendelse.skjerming
 import io.kotest.matchers.sequences.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import no.nav.hjelpemidler.personhendelse.Configuration
-import no.nav.hjelpemidler.personhendelse.domene.toFødselsnummer
+import no.nav.hjelpemidler.personhendelse.domene.lagFødselsnummer
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
 import no.nav.hjelpemidler.personhendelse.kafka.stringSerde
 import no.nav.hjelpemidler.personhendelse.test.asSequence
@@ -30,16 +30,16 @@ class SkjermetPersonStatusTopologyTest {
 
     @Test
     fun `Skal transformere melding om skjermet person og sende svaret videre på rapid`() {
-        val personId = "12345678910"
+        val personId = lagFødselsnummer(50)
         val skjermet = true
 
-        inputTopic.pipeInput(personId, skjermet.toString())
+        inputTopic.pipeInput(personId.toString(), skjermet.toString())
 
         val record = outputTopic.asSequence().single()
-        record.key shouldBe personId
+        record.key shouldBe personId.toString()
 
         val value = record.value
-        value.fnr shouldBe personId.toFødselsnummer()
+        value.fnr shouldBe personId
         value.skjermet shouldBe skjermet
     }
 

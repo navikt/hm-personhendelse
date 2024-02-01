@@ -4,7 +4,8 @@ import io.kotest.matchers.sequences.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
 import no.nav.hjelpemidler.personhendelse.Configuration
-import no.nav.hjelpemidler.personhendelse.domene.toFødselsnummer
+import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
+import no.nav.hjelpemidler.personhendelse.domene.lagFødselsnummer
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
 import no.nav.hjelpemidler.personhendelse.kafka.specificAvroSerde
 import no.nav.hjelpemidler.personhendelse.kafka.stringSerde
@@ -40,7 +41,7 @@ class PersonhendelseTopologyTest {
 
     @Test
     fun `Skal filtrere vekk melding som ikke skal sendes videre på rapid`() {
-        val fnr = "12345678910"
+        val fnr = lagFødselsnummer(10)
 
         inputTopic.pipeInput(fnr) {
             opplysningstype = "TEST_V1"
@@ -53,7 +54,7 @@ class PersonhendelseTopologyTest {
 
     @Test
     fun `Skal transformere melding om opprettet adressebeskyttelse og sende svaret videre på rapid`() {
-        val fnr = "12345678910"
+        val fnr = lagFødselsnummer(20)
         val gradering = Gradering.STRENGT_FORTROLIG
 
         inputTopic.pipeInput(fnr) {
@@ -63,16 +64,16 @@ class PersonhendelseTopologyTest {
         }
 
         val record = outputTopic.asSequence().single()
-        record.key shouldBe fnr
+        record.key shouldBe fnr.toString()
 
         val value = record.value.shouldBeInstanceOf<PersonhendelseAdressebeskyttelseEvent>()
-        value.fnr shouldBe fnr.toFødselsnummer()
+        value.fnr shouldBe fnr
         value.gradering shouldBe gradering
     }
 
     @Test
     fun `Skal transformere melding om annulert adressebeskyttelse og sende svaret videre på rapid`() {
-        val fnr = "12345678910"
+        val fnr = lagFødselsnummer(30)
 
         inputTopic.pipeInput(fnr) {
             behandletOpplysningstype = BehandletOpplysningstype.ADRESSEBESKYTTELSE_V1
@@ -81,16 +82,16 @@ class PersonhendelseTopologyTest {
         }
 
         val record = outputTopic.asSequence().single()
-        record.key shouldBe fnr
+        record.key shouldBe fnr.toString()
 
         val value = record.value.shouldBeInstanceOf<PersonhendelseAdressebeskyttelseEvent>()
-        value.fnr shouldBe fnr.toFødselsnummer()
+        value.fnr shouldBe fnr
         value.gradering shouldBe null
     }
 
     @Test
     fun `Skal transformere melding om opprettet dødsfall og sende svaret videre på rapid`() {
-        val fnr = "12345678910"
+        val fnr = lagFødselsnummer(40)
         val dødsdato = LocalDate.now()
 
         inputTopic.pipeInput(fnr) {
@@ -100,16 +101,16 @@ class PersonhendelseTopologyTest {
         }
 
         val record = outputTopic.asSequence().single()
-        record.key shouldBe fnr
+        record.key shouldBe fnr.toString()
 
         val value = record.value.shouldBeInstanceOf<PersonhendelseDødsfallEvent>()
-        value.fnr shouldBe fnr.toFødselsnummer()
+        value.fnr shouldBe fnr
         value.dødsdato shouldBe dødsdato
     }
 
     @Test
     fun `Skal transformere melding om annulert dødsfall og sende svaret videre på rapid`() {
-        val fnr = "12345678910"
+        val fnr = lagFødselsnummer(50)
 
         inputTopic.pipeInput(fnr) {
             behandletOpplysningstype = BehandletOpplysningstype.DØDSFALL_V1
@@ -118,19 +119,19 @@ class PersonhendelseTopologyTest {
         }
 
         val record = outputTopic.asSequence().single()
-        record.key shouldBe fnr
+        record.key shouldBe fnr.toString()
 
         val value = record.value.shouldBeInstanceOf<PersonhendelseDødsfallEvent>()
-        value.fnr shouldBe fnr.toFødselsnummer()
+        value.fnr shouldBe fnr
         value.dødsdato shouldBe null
     }
 }
 
 private fun TestInputTopic<String, Personhendelse>.pipeInput(
-    fnr: String,
+    fnr: Fødselsnummer,
     block: Personhendelse.() -> Unit
 ): Personhendelse {
     val personhendelse = lagPersonhendelse(fnr, block)
-    pipeInput(fnr, personhendelse)
+    pipeInput(fnr.toString(), personhendelse)
     return personhendelse
 }

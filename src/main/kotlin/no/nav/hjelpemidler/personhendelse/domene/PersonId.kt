@@ -2,10 +2,13 @@ package no.nav.hjelpemidler.personhendelse.domene
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
+import no.bekk.bekkopen.person.FodselsnummerValidator
 
 sealed interface PersonId {
-    @get:JsonValue
     val value: String
+
+    @JsonValue
+    override fun toString(): String
 }
 
 fun String.toPersonId(): PersonId = when {
@@ -44,8 +47,7 @@ data class Fødselsnummer @JsonCreator constructor(override val value: String) :
     override fun toString(): String = value
 
     companion object {
-        private val regex = "^[0-9]{11}\$".toRegex()
-        fun isValid(value: String): Boolean = value matches regex
+        fun isValid(value: String): Boolean = FodselsnummerValidator.isValid(value)
     }
 }
 
