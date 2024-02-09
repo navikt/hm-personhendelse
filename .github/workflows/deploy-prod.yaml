@@ -8,6 +8,9 @@ jobs:
   deploy:
     name: Deploy til prod-gcp
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v4
       - uses: nais/login@v0
