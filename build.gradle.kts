@@ -38,9 +38,7 @@ dependencies {
     testImplementation(libs.kafka.streams.test.utils)
 }
 
-val javaVersion = JavaLanguageVersion.of(21)
-java { toolchain { languageVersion.set(javaVersion) } }
-kotlin { jvmToolchain { languageVersion.set(javaVersion) } }
+kotlin { jvmToolchain(21) }
 
 tasks.test { useJUnitPlatform() }
 

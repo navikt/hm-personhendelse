@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.personhendelse.skjerming
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
 import no.nav.hjelpemidler.personhendelse.domene.toPersonId

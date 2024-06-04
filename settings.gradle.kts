@@ -1,5 +1,3 @@
-rootProject.name = "hm-personhendelse"
-
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
@@ -18,7 +16,9 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            from("no.nav.hjelpemidler:hm-katalog:0.1.24")
+            from("no.nav.hjelpemidler:hm-katalog:0.2.4")
         }
     }
 }
+
+rootProject.name = "hm-personhendelse"

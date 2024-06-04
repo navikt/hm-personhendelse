@@ -1,4 +1,4 @@
-name: "CodeQL"
+name: Gjør CodeQL-analyse
 
 on:
   push:
@@ -7,40 +7,8 @@ on:
 
 jobs:
   codeql-analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
       security-events: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v2
-
-      # Initializes the CodeQL tools for scanning.
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
-        with:
-          languages: java
-          queries: security-and-quality
-
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Build application
-        run: ./gradlew build --no-daemon
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
-        with:
-          category: "/language:java"
+    uses: navikt/hm-workflows/.github/workflows/codeql.yaml@main

@@ -10,8 +10,8 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import no.bekk.bekkopen.person.FodselsnummerValidator
 import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.configuration.GcpEnvironment
