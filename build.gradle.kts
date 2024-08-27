@@ -23,18 +23,15 @@ dependencies {
     implementation(libs.micrometer.registry.prometheus)
 
     // Jackson
-    implementation(libs.jackson.databind)
-    implementation(libs.jackson.datatype.jsr310)
-    implementation(libs.jackson.module.kotlin)
+    implementation(libs.bundles.jackson)
 
     // DigiHoT
-    implementation(libs.hm.http)
+    implementation(libs.hm.core)
     implementation(libs.hm.contract.pdl.avro)
 
     // Logging
     implementation(libs.kotlin.logging)
-    runtimeOnly(libs.logback.classic)
-    runtimeOnly(libs.logstash.logback.encoder)
+    runtimeOnly(libs.bundles.logging.runtime)
 
     // Test
     testImplementation(libs.bundles.test)

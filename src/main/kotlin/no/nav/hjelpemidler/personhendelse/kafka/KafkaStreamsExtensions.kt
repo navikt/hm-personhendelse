@@ -1,7 +1,5 @@
 package no.nav.hjelpemidler.personhendelse.kafka
 
-import no.nav.hjelpemidler.configuration.Environment
-import no.nav.hjelpemidler.configuration.GcpEnvironment
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
 import org.apache.kafka.streams.KafkaStreams
@@ -21,7 +19,5 @@ fun kafkaStreams(
 infix fun <K, V> K.withValue(value: V): KeyValue<K, V> = KeyValue.pair(this, value)
 
 inline fun <reified T> KStream<Fødselsnummer, T>.toRapid() {
-    if (Environment.current != GcpEnvironment.PROD) {
-        to(Configuration.KAFKA_RAPID_TOPIC, Produced.with(fødselsnummerSerde, jsonSerde<T>()))
-    }
+    to(Configuration.KAFKA_RAPID_TOPIC, Produced.with(fødselsnummerSerde, jsonSerde<T>()))
 }
