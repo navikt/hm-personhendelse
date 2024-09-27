@@ -26,7 +26,7 @@ dependencies {
     implementation(libs.bundles.jackson)
 
     // DigiHoT
-    implementation(libs.hm.core)
+    implementation(libs.hotlibs.core)
     implementation(libs.hm.contract.pdl.avro)
 
     // Logging
@@ -38,7 +38,7 @@ dependencies {
     testImplementation(libs.kafka.streams.test.utils)
 }
 
-kotlin { jvmToolchain(21) }
+java { toolchain { languageVersion.set(JavaLanguageVersion.of(21)) } }
 
 tasks.test { useJUnitPlatform() }
 
