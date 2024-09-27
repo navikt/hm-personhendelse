@@ -1,9 +1,9 @@
 package no.nav.hjelpemidler.personhendelse.skjerming
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
+import no.nav.hjelpemidler.domain.person.toPersonIdent
 import no.nav.hjelpemidler.personhendelse.Configuration
-import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
-import no.nav.hjelpemidler.personhendelse.domene.toPersonId
 import no.nav.hjelpemidler.personhendelse.kafka.stringSerde
 import no.nav.hjelpemidler.personhendelse.kafka.toRapid
 import no.nav.hjelpemidler.personhendelse.kafka.withValue
@@ -18,18 +18,18 @@ fun StreamsBuilder.skjermetPersonStatus(): Unit = this
         Configuration.SKJERMEDE_PERSONER_STATUS_TOPIC,
         Consumed.with(stringSerde, stringSerde)
     )
-    .map { personId, skjermet -> personId.toPersonId() withValue skjermet.toBoolean() }
-    .peek { personId, skjermet ->
+    .map { ident, skjermet -> ident.toPersonIdent() withValue skjermet.toBoolean() }
+    .peek { ident, skjermet ->
         log.info { "Mottok melding om skjermet person" }
-        secureLog.info { "Mottok melding om skjermet person, personId: $personId, skjermet: $skjermet" }
+        secureLog.info { "Mottok melding om skjermet person, ident: $ident, skjermet: $skjermet" }
     }
-    .filter { personId, skjermet ->
-        val harFnr = personId is Fødselsnummer
+    .filter { ident, skjermet ->
+        val harFnr = ident is Fødselsnummer
         if (!harFnr) {
-            secureLog.info { "Ignorerer personId: $personId, mangler fnr, skjermet: $skjermet" }
+            secureLog.info { "Ignorerer ident: $ident, mangler fnr, skjermet: $skjermet" }
         }
         harFnr
     }
-    .selectKey { personId, _ -> personId as Fødselsnummer }
+    .selectKey { ident, _ -> ident as Fødselsnummer }
     .mapValues(::SkjermetPersonStatusEvent)
     .toRapid()

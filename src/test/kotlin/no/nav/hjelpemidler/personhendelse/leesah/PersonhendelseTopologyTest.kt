@@ -3,9 +3,9 @@ package no.nav.hjelpemidler.personhendelse.leesah
 import io.kotest.matchers.sequences.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
+import no.nav.hjelpemidler.domain.person.år
 import no.nav.hjelpemidler.personhendelse.Configuration
-import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
-import no.nav.hjelpemidler.personhendelse.domene.lagFødselsnummer
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
 import no.nav.hjelpemidler.personhendelse.kafka.specificAvroSerde
 import no.nav.hjelpemidler.personhendelse.kafka.stringSerde
@@ -41,7 +41,7 @@ class PersonhendelseTopologyTest {
 
     @Test
     fun `Skal filtrere vekk melding som ikke skal sendes videre på rapid`() {
-        val fnr = lagFødselsnummer(10)
+        val fnr = Fødselsnummer(10.år)
 
         inputTopic.pipeInput(fnr) {
             opplysningstype = "TEST_V1"
@@ -54,7 +54,7 @@ class PersonhendelseTopologyTest {
 
     @Test
     fun `Skal transformere melding om opprettet adressebeskyttelse og sende svaret videre på rapid`() {
-        val fnr = lagFødselsnummer(20)
+        val fnr = Fødselsnummer(20.år)
         val gradering = Gradering.STRENGT_FORTROLIG
 
         inputTopic.pipeInput(fnr) {
@@ -73,7 +73,7 @@ class PersonhendelseTopologyTest {
 
     @Test
     fun `Skal transformere melding om annulert adressebeskyttelse og sende svaret videre på rapid`() {
-        val fnr = lagFødselsnummer(30)
+        val fnr = Fødselsnummer(30.år)
 
         inputTopic.pipeInput(fnr) {
             behandletOpplysningstype = BehandletOpplysningstype.ADRESSEBESKYTTELSE_V1
@@ -91,7 +91,7 @@ class PersonhendelseTopologyTest {
 
     @Test
     fun `Skal transformere melding om opprettet dødsfall og sende svaret videre på rapid`() {
-        val fnr = lagFødselsnummer(40)
+        val fnr = Fødselsnummer(40.år)
         val dødsdato = LocalDate.now()
 
         inputTopic.pipeInput(fnr) {
@@ -110,7 +110,7 @@ class PersonhendelseTopologyTest {
 
     @Test
     fun `Skal transformere melding om annulert dødsfall og sende svaret videre på rapid`() {
-        val fnr = lagFødselsnummer(50)
+        val fnr = Fødselsnummer(50.år)
 
         inputTopic.pipeInput(fnr) {
             behandletOpplysningstype = BehandletOpplysningstype.DØDSFALL_V1
@@ -129,7 +129,7 @@ class PersonhendelseTopologyTest {
 
 private fun TestInputTopic<String, Personhendelse>.pipeInput(
     fnr: Fødselsnummer,
-    block: Personhendelse.() -> Unit
+    block: Personhendelse.() -> Unit,
 ): Personhendelse {
     val personhendelse = lagPersonhendelse(fnr, block)
     pipeInput(fnr.toString(), personhendelse)

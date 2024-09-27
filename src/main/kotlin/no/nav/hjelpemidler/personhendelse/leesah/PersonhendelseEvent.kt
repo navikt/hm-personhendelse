@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import no.nav.hjelpemidler.personhendelse.domene.Event
+import no.nav.hjelpemidler.personhendelse.domain.Event
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import java.time.Instant

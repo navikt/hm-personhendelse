@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
-import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.streams.kstream.Predicate
 

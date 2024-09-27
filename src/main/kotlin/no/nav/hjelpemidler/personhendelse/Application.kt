@@ -12,9 +12,8 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.micrometer.prometheusmetrics.PrometheusConfig
 import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
-import no.bekk.bekkopen.person.FodselsnummerValidator
 import no.nav.hjelpemidler.configuration.Environment
-import no.nav.hjelpemidler.configuration.GcpEnvironment
+import no.nav.hjelpemidler.domain.person.TILLAT_SYNTETISKE_FØDSELSNUMRE
 import no.nav.hjelpemidler.personhendelse.kafka.KafkaStreamsPlugin
 import no.nav.hjelpemidler.personhendelse.kafka.kafkaStreams
 import no.nav.hjelpemidler.personhendelse.leesah.personhendelse
@@ -25,7 +24,7 @@ fun main() {
 }
 
 fun Application.main() {
-    FodselsnummerValidator.ALLOW_SYNTHETIC_NUMBERS = Environment.current != GcpEnvironment.PROD
+    TILLAT_SYNTETISKE_FØDSELSNUMRE = !Environment.current.isProd
 
     val meterRegistry = PrometheusMeterRegistry(PrometheusConfig.DEFAULT)
     install(MicrometerMetrics) {

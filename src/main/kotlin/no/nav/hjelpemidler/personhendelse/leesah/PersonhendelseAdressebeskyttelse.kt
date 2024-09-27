@@ -1,6 +1,6 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
-import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.personhendelse.kafka.toRapid
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
@@ -33,10 +33,12 @@ data class PersonhendelseAdressebeskyttelseEvent(
         fnr = fnr,
         gradering = when (val endringstype = personhendelse.endringstype) {
             Endringstype.OPPRETTET,
-            Endringstype.KORRIGERT -> personhendelse.adressebeskyttelse.gradering
+            Endringstype.KORRIGERT,
+                -> personhendelse.adressebeskyttelse.gradering
 
             Endringstype.ANNULLERT,
-            Endringstype.OPPHOERT -> null
+            Endringstype.OPPHOERT,
+                -> null
 
             else -> error("Ukjent endringstype: $endringstype")
         },

@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.personhendelse.log.secureLog
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.streams.kstream.BranchedKStream

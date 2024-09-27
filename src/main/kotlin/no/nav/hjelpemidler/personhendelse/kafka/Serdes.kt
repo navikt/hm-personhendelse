@@ -3,9 +3,9 @@ package no.nav.hjelpemidler.personhendelse.kafka
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import io.confluent.kafka.streams.serdes.avro.GenericAvroSerde
 import io.confluent.kafka.streams.serdes.avro.SpecificAvroSerde
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
+import no.nav.hjelpemidler.domain.person.toFødselsnummer
 import no.nav.hjelpemidler.personhendelse.Configuration
-import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
-import no.nav.hjelpemidler.personhendelse.domene.toFødselsnummer
 import no.nav.hjelpemidler.personhendelse.jsonMapper
 import org.apache.avro.generic.GenericRecord
 import org.apache.avro.specific.SpecificRecord

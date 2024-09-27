@@ -1,18 +1,18 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
-import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
-import no.nav.hjelpemidler.personhendelse.domene.toPersonId
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
+import no.nav.hjelpemidler.domain.person.toPersonIdent
 import no.nav.person.pdl.leesah.Personhendelse
 
 val Personhendelse.harFnr: Boolean
     get() = personidenter
-        .map(String::toPersonId)
+        .map(String::toPersonIdent)
         .filterIsInstance<Fødselsnummer>()
         .isNotEmpty()
 
 val Personhendelse.fnr: Fødselsnummer
     get() = personidenter
-        .map(String::toPersonId)
+        .map(String::toPersonIdent)
         .filterIsInstance<Fødselsnummer>()
         .first() // fixme -> burde vi hatt single() eller kan vi ha historiske, ulike verdier her?
 

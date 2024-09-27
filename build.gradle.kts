@@ -6,7 +6,6 @@ plugins {
 
 dependencies {
     implementation(libs.kotlin.stdlib)
-    implementation(libs.nocommons)
 
     // Kafka
     implementation(libs.kafka.streams)

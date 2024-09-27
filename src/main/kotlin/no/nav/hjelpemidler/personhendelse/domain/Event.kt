@@ -1,4 +1,4 @@
-package no.nav.hjelpemidler.personhendelse.domene
+package no.nav.hjelpemidler.personhendelse.domain
 
 import java.time.Instant
 import java.util.UUID

@@ -2,8 +2,9 @@ package no.nav.hjelpemidler.personhendelse.skjerming
 
 import io.kotest.matchers.sequences.shouldBeEmpty
 import io.kotest.matchers.shouldBe
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
+import no.nav.hjelpemidler.domain.person.år
 import no.nav.hjelpemidler.personhendelse.Configuration
-import no.nav.hjelpemidler.personhendelse.domene.lagFødselsnummer
 import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
 import no.nav.hjelpemidler.personhendelse.kafka.stringSerde
 import no.nav.hjelpemidler.personhendelse.test.asSequence
@@ -30,25 +31,25 @@ class SkjermetPersonStatusTopologyTest {
 
     @Test
     fun `Skal transformere melding om skjermet person og sende svaret videre på rapid`() {
-        val personId = lagFødselsnummer(50)
+        val ident = Fødselsnummer(50.år)
         val skjermet = true
 
-        inputTopic.pipeInput(personId.toString(), skjermet.toString())
+        inputTopic.pipeInput(ident.toString(), skjermet.toString())
 
         val record = outputTopic.asSequence().single()
-        record.key shouldBe personId.toString()
+        record.key shouldBe ident.toString()
 
         val value = record.value
-        value.fnr shouldBe personId
+        value.fnr shouldBe ident
         value.skjermet shouldBe skjermet
     }
 
     @Test
     fun `Skal ignorere melding om skjermet person som ikke har fnr som nøkkel`() {
-        val personId = "19901220ABC"
+        val ident = "19901220ABC"
         val skjermet = true
 
-        inputTopic.pipeInput(personId, skjermet.toString())
+        inputTopic.pipeInput(ident, skjermet.toString())
 
         outputTopic.asSequence().shouldBeEmpty()
     }

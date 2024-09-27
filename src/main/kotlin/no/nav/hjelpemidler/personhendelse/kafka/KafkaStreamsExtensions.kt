@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler.personhendelse.kafka
 
+import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.personhendelse.Configuration
-import no.nav.hjelpemidler.personhendelse.domene.Fødselsnummer
 import org.apache.kafka.streams.KafkaStreams
 import org.apache.kafka.streams.KeyValue
 import org.apache.kafka.streams.StreamsBuilder
