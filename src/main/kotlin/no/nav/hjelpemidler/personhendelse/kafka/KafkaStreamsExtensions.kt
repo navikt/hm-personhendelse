@@ -8,13 +8,14 @@ import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.kstream.KStream
 import org.apache.kafka.streams.kstream.Produced
+import java.util.Properties
 
 fun topology(block: StreamsBuilder.() -> Unit): Topology = StreamsBuilder().apply(block).build()
 
 fun kafkaStreams(
-    configuration: Map<String, String> = Configuration.kafkaStreamsConfiguration(),
+    configuration: Properties = Configuration.kafkaStreamsConfiguration(),
     block: StreamsBuilder.() -> Unit,
-): KafkaStreams = KafkaStreams(topology(block), configuration.toProperties())
+): KafkaStreams = KafkaStreams(topology(block), configuration)
 
 infix fun <K, V> K.withValue(value: V): KeyValue<K, V> = KeyValue.pair(this, value)
 
