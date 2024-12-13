@@ -3,11 +3,11 @@ package no.nav.hjelpemidler.personhendelse.skjerming
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.domain.person.toPersonIdent
+import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.kafka.stringSerde
 import no.nav.hjelpemidler.personhendelse.kafka.toRapid
 import no.nav.hjelpemidler.personhendelse.kafka.withValue
-import no.nav.hjelpemidler.personhendelse.log.secureLog
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
 

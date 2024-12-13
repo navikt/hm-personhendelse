@@ -1,9 +1,9 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
+import no.nav.hjelpemidler.logging.secureLog
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.personhendelse.kafka.specificAvroSerde
 import no.nav.hjelpemidler.personhendelse.kafka.stringSerde
-import no.nav.hjelpemidler.personhendelse.log.secureLog
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
