@@ -15,7 +15,7 @@ import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.state.BuiltInDslStoreSuppliers.InMemoryDslStoreSuppliers
 
 object Configuration {
-    val HTTP_PORT by environmentVariable<Int>()
+    val HTTP_PORT: Int by environmentVariable()
     val KAFKA_APPLICATION_ID by EnvironmentVariable
     val KAFKA_RAPID_TOPIC by EnvironmentVariable
     val LEESAH_TOPIC by EnvironmentVariable
