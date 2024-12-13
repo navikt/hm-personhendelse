@@ -23,10 +23,10 @@ data class PersonhendelseDødsfallEvent(
     override val kilde: PersonhendelseEvent.Kilde,
     val fnr: Fødselsnummer,
     val dødsdato: LocalDate?,
+    override val eventId: UUID = UUID.randomUUID(),
+    override val opprettet: Instant = Instant.now(),
 ) : PersonhendelseEvent {
-    override val eventId: UUID = UUID.randomUUID()
     override val eventName: String = "hm-personhendelse-dødsfall"
-    override val opprettet: Instant = Instant.now()
 
     constructor(fnr: Fødselsnummer, personhendelse: Personhendelse) : this(
         kilde = personhendelse.kilde,

@@ -23,10 +23,10 @@ data class PersonhendelseAdressebeskyttelseEvent(
     override val kilde: PersonhendelseEvent.Kilde,
     val fnr: Fødselsnummer,
     val gradering: Gradering?,
+    override val eventId: UUID = UUID.randomUUID(),
+    override val opprettet: Instant = Instant.now(),
 ) : PersonhendelseEvent {
-    override val eventId: UUID = UUID.randomUUID()
     override val eventName: String = "hm-personhendelse-adressebeskyttelse"
-    override val opprettet: Instant = Instant.now()
 
     constructor(fnr: Fødselsnummer, personhendelse: Personhendelse) : this(
         kilde = personhendelse.kilde,
