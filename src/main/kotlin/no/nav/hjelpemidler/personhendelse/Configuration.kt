@@ -4,14 +4,13 @@ import io.confluent.kafka.schemaregistry.client.SchemaRegistryClientConfig
 import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig
 import no.nav.hjelpemidler.configuration.EnvironmentVariable
 import no.nav.hjelpemidler.configuration.KafkaEnvironmentVariable
-import no.nav.hjelpemidler.configuration.environmentVariable
 import no.nav.hjelpemidler.kafka.createKafkaClientConfiguration
 import org.apache.kafka.streams.StreamsConfig
 import org.apache.kafka.streams.state.BuiltInDslStoreSuppliers.InMemoryDslStoreSuppliers
 import java.util.Properties
 
 object Configuration {
-    val HTTP_PORT: Int by environmentVariable()
+    val HTTP_PORT by EnvironmentVariable(transform = String::toInt)
     val KAFKA_APPLICATION_ID by EnvironmentVariable
     val KAFKA_RAPID_TOPIC by EnvironmentVariable
     val LEESAH_TOPIC by EnvironmentVariable
