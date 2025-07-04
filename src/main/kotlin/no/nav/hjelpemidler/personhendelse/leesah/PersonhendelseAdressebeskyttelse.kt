@@ -11,23 +11,24 @@ import org.apache.kafka.streams.kstream.Branched
 import java.time.Instant
 import java.util.UUID
 
-fun PersonhendelseBranchedStream.adressebeskyttelse(): PersonhendelseBranchedStream = branch(
-    behandletOpplysningstypeFilter(BehandletOpplysningstype.ADRESSEBESKYTTELSE_V1),
-    Branched.withConsumer { stream ->
-        stream
-            .log()
-            .mapValues(::PersonhendelseAdressebeskyttelseEvent)
-            .toRapid<Fødselsnummer, PersonhendelseAdressebeskyttelseEvent>(fødselsnummerSerde())
-    },
-)
+fun PersonhendelseBranchedStream.adressebeskyttelse(): PersonhendelseBranchedStream =
+    branch(
+        behandletOpplysningstypeFilter(BehandletOpplysningstype.ADRESSEBESKYTTELSE_V1),
+        Branched.withConsumer { stream ->
+            stream
+                .log()
+                .mapValues(::PersonhendelseAdressebeskyttelseEvent)
+                .toRapid<Fødselsnummer, PersonhendelseAdressebeskyttelseEvent>(fødselsnummerSerde())
+        },
+    )
 
 @KafkaEvent("hm-personhendelse-adressebeskyttelse")
 data class PersonhendelseAdressebeskyttelseEvent(
     override val kilde: PersonhendelseEvent.Kilde,
     val fnr: Fødselsnummer,
     val gradering: Gradering?,
+    val opprettet: Instant = Instant.now(),
     override val eventId: UUID = UUID.randomUUID(),
-    override val opprettet: Instant = Instant.now(),
 ) : PersonhendelseEvent {
     constructor(fnr: Fødselsnummer, personhendelse: Personhendelse) : this(
         kilde = personhendelse.kilde,

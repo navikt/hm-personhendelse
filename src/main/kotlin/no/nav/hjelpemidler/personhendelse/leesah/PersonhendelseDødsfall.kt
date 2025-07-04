@@ -11,23 +11,24 @@ import java.time.Instant
 import java.time.LocalDate
 import java.util.UUID
 
-fun PersonhendelseBranchedStream.dødsfall(): PersonhendelseBranchedStream = branch(
-    behandletOpplysningstypeFilter(BehandletOpplysningstype.DØDSFALL_V1),
-    Branched.withConsumer { stream ->
-        stream
-            .log()
-            .mapValues(::PersonhendelseDødsfallEvent)
-            .toRapid<Fødselsnummer, PersonhendelseDødsfallEvent>(fødselsnummerSerde())
-    },
-)
+fun PersonhendelseBranchedStream.dødsfall(): PersonhendelseBranchedStream =
+    branch(
+        behandletOpplysningstypeFilter(BehandletOpplysningstype.DØDSFALL_V1),
+        Branched.withConsumer { stream ->
+            stream
+                .log()
+                .mapValues(::PersonhendelseDødsfallEvent)
+                .toRapid<Fødselsnummer, PersonhendelseDødsfallEvent>(fødselsnummerSerde())
+        },
+    )
 
 @KafkaEvent("hm-personhendelse-dødsfall")
 data class PersonhendelseDødsfallEvent(
     override val kilde: PersonhendelseEvent.Kilde,
     val fnr: Fødselsnummer,
     val dødsdato: LocalDate?,
+    val opprettet: Instant = Instant.now(),
     override val eventId: UUID = UUID.randomUUID(),
-    override val opprettet: Instant = Instant.now(),
 ) : PersonhendelseEvent {
     constructor(fnr: Fødselsnummer, personhendelse: Personhendelse) : this(
         kilde = personhendelse.kilde,

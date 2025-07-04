@@ -1,13 +1,13 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import no.nav.hjelpemidler.personhendelse.domain.Event
+import no.nav.hjelpemidler.kafka.KafkaMessage
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import java.time.Instant
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "class")
-sealed interface PersonhendelseEvent : Event {
+sealed interface PersonhendelseEvent : KafkaMessage {
     val kilde: Kilde
 
     data class Kilde(
