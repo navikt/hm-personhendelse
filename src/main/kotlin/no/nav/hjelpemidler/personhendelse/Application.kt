@@ -17,5 +17,5 @@ fun main() {
             personhendelse()
             skjermetPersonStatus()
         }
-    }.start()
+    }.start(wait = true)
 }
