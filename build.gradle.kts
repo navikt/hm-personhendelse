@@ -8,32 +8,7 @@ dependencies {
     // hotlibs
     implementation(platform(libs.hotlibs.platform))
     implementation(libs.hotlibs.streams)
-
-    // Kafka
-    implementation(libs.kafka.streams)
-    implementation(libs.kafka.streams.avro.serde)
-    constraints {
-        implementation(libs.commons.compress)
-    }
-
-    // Ktor
-    implementation(libs.ktor.server.netty)
-    implementation(libs.ktor.server.metrics.micrometer)
-
-    // Metrics
-    implementation(libs.micrometer.registry.prometheus)
-
-    // Jackson
-    implementation(libs.bundles.jackson)
-
-    // DigiHoT
-    implementation(libs.hotlibs.core)
-    implementation(libs.hotlibs.kafka)
     implementation(libs.hm.contract.pdl.avro)
-
-    // Logging
-    implementation(libs.kotlin.logging)
-    runtimeOnly(libs.bundles.logging.runtime)
 }
 
 java { toolchain { languageVersion.set(JavaLanguageVersion.of(21)) } }
