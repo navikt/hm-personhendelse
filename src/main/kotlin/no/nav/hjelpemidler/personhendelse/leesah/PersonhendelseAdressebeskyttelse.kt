@@ -1,6 +1,7 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
+import no.nav.hjelpemidler.kafka.KafkaEvent
 import no.nav.hjelpemidler.streams.serialization.fødselsnummerSerde
 import no.nav.hjelpemidler.streams.toRapid
 import no.nav.person.pdl.leesah.Endringstype
@@ -20,6 +21,7 @@ fun PersonhendelseBranchedStream.adressebeskyttelse(): PersonhendelseBranchedStr
     },
 )
 
+@KafkaEvent("hm-personhendelse-adressebeskyttelse")
 data class PersonhendelseAdressebeskyttelseEvent(
     override val kilde: PersonhendelseEvent.Kilde,
     val fnr: Fødselsnummer,
@@ -27,8 +29,6 @@ data class PersonhendelseAdressebeskyttelseEvent(
     override val eventId: UUID = UUID.randomUUID(),
     override val opprettet: Instant = Instant.now(),
 ) : PersonhendelseEvent {
-    override val eventName: String = "hm-personhendelse-adressebeskyttelse"
-
     constructor(fnr: Fødselsnummer, personhendelse: Personhendelse) : this(
         kilde = personhendelse.kilde,
         fnr = fnr,
