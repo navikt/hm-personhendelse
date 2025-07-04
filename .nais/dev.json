@@ -3,5 +3,6 @@
   "KAFKA_APPLICATION_ID": "hm-personhendelse-v1",
   "KAFKA_RAPID_TOPIC": "teamdigihot.hm-soknadsbehandling-v1",
   "LEESAH_TOPIC": "pdl.leesah-v1",
-  "SKJERMEDE_PERSONER_STATUS_TOPIC": "nom.skjermede-personer-status-v1"
+  "SKJERMEDE_PERSONER_STATUS_TOPIC": "nom.skjermede-personer-status-v1",
+  "PERSONHENDELSE_LOG_LEVEL": "DEBUG"
 }

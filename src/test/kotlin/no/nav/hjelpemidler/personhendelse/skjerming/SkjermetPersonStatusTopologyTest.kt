@@ -5,10 +5,10 @@ import io.kotest.matchers.shouldBe
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.domain.person.år
 import no.nav.hjelpemidler.personhendelse.Configuration
-import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
-import no.nav.hjelpemidler.personhendelse.kafka.stringSerde
 import no.nav.hjelpemidler.personhendelse.test.asSequence
 import no.nav.hjelpemidler.personhendelse.test.testTopology
+import no.nav.hjelpemidler.streams.serialization.jsonSerde
+import no.nav.hjelpemidler.streams.serialization.serde
 import kotlin.test.Test
 
 class SkjermetPersonStatusTopologyTest {
@@ -20,12 +20,12 @@ class SkjermetPersonStatusTopologyTest {
 
     private val inputTopic = driver.createInputTopic(
         Configuration.SKJERMEDE_PERSONER_STATUS_TOPIC,
-        stringSerde.serializer(),
-        stringSerde.serializer(),
+        serde<String>().serializer(),
+        serde<String>().serializer(),
     )
     private val outputTopic = driver.createOutputTopic(
         Configuration.KAFKA_RAPID_TOPIC,
-        stringSerde.deserializer(),
+        serde<String>().deserializer(),
         skjermetPersonStatusEventSerde.deserializer(),
     )
 

@@ -6,11 +6,11 @@ import io.kotest.matchers.types.shouldBeInstanceOf
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
 import no.nav.hjelpemidler.domain.person.år
 import no.nav.hjelpemidler.personhendelse.Configuration
-import no.nav.hjelpemidler.personhendelse.kafka.jsonSerde
-import no.nav.hjelpemidler.personhendelse.kafka.specificAvroSerde
-import no.nav.hjelpemidler.personhendelse.kafka.stringSerde
 import no.nav.hjelpemidler.personhendelse.test.asSequence
 import no.nav.hjelpemidler.personhendelse.test.testTopology
+import no.nav.hjelpemidler.streams.serialization.jsonSerde
+import no.nav.hjelpemidler.streams.serialization.serde
+import no.nav.hjelpemidler.streams.serialization.specificAvroSerde
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import no.nav.person.pdl.leesah.adressebeskyttelse.Adressebeskyttelse
@@ -30,12 +30,12 @@ class PersonhendelseTopologyTest {
 
     private val inputTopic = driver.createInputTopic(
         Configuration.LEESAH_TOPIC,
-        stringSerde.serializer(),
+        serde<String>().serializer(),
         personhendelseSerde.serializer(),
     )
     private val outputTopic = driver.createOutputTopic(
         Configuration.KAFKA_RAPID_TOPIC,
-        stringSerde.deserializer(),
+        serde<String>().deserializer(),
         personhendelseEventSerde.deserializer(),
     )
 

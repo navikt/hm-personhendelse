@@ -2,7 +2,7 @@ package no.nav.hjelpemidler.personhendelse.leesah
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
-import no.nav.hjelpemidler.logging.secureLog
+import no.nav.hjelpemidler.logging.teamInfo
 import no.nav.person.pdl.leesah.Personhendelse
 import org.apache.kafka.streams.kstream.BranchedKStream
 import org.apache.kafka.streams.kstream.KStream
@@ -14,5 +14,5 @@ typealias PersonhendelseBranchedStream = BranchedKStream<Fødselsnummer, Personh
 
 fun PersonhendelseStream.log(): PersonhendelseStream = peek { _, personhendelse ->
     log.info { "Mottok personhendelse til prosessering, ${personhendelse.sammendrag}" }
-    secureLog.info { "Mottok personhendelse til prosessering for fnr: ${personhendelse.fnr}, personidenter: ${personhendelse.personidenter}, hendelseId: ${personhendelse.hendelseId}" }
+    log.teamInfo { "Mottok personhendelse til prosessering for fnr: ${personhendelse.fnr}, personidenter: ${personhendelse.personidenter}, hendelseId: ${personhendelse.hendelseId}" }
 }

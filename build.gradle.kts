@@ -5,6 +5,10 @@ plugins {
 }
 
 dependencies {
+    // hotlibs
+    implementation(platform(libs.hotlibs.platform))
+    implementation(libs.hotlibs.streams)
+
     // Kafka
     implementation(libs.kafka.streams)
     implementation(libs.kafka.streams.avro.serde)

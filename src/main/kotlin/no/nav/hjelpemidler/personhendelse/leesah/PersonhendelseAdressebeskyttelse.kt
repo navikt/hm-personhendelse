@@ -1,7 +1,8 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
-import no.nav.hjelpemidler.personhendelse.kafka.toRapid
+import no.nav.hjelpemidler.streams.serialization.fødselsnummerSerde
+import no.nav.hjelpemidler.streams.toRapid
 import no.nav.person.pdl.leesah.Endringstype
 import no.nav.person.pdl.leesah.Personhendelse
 import no.nav.person.pdl.leesah.adressebeskyttelse.Gradering
@@ -15,7 +16,7 @@ fun PersonhendelseBranchedStream.adressebeskyttelse(): PersonhendelseBranchedStr
         stream
             .log()
             .mapValues(::PersonhendelseAdressebeskyttelseEvent)
-            .toRapid()
+            .toRapid<Fødselsnummer, PersonhendelseAdressebeskyttelseEvent>(fødselsnummerSerde())
     },
 )
 
