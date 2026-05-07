@@ -2,7 +2,7 @@ package no.nav.hjelpemidler.personhendelse.skjerming
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
-import no.nav.hjelpemidler.domain.person.toPersonIdent
+import no.nav.hjelpemidler.domain.person.personIdentOrNullOf
 import no.nav.hjelpemidler.logging.teamInfo
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.streams.serialization.fødselsnummerSerde
@@ -19,7 +19,7 @@ fun StreamsBuilder.skjermetPersonStatus(): Unit = this
         Configuration.SKJERMEDE_PERSONER_STATUS_TOPIC,
         Consumed.with(serde<String>(), serde<String>())
     )
-    .map { ident, skjermet -> ident.toPersonIdent() withValue skjermet.toBoolean() }
+    .map { ident, skjermet -> personIdentOrNullOf(ident) withValue skjermet.toBoolean() }
     .peek { ident, skjermet ->
         log.info { "Mottok melding om skjermet person" }
         log.teamInfo { "Mottok melding om skjermet person, ident: $ident, skjermet: $skjermet" }

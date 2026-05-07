@@ -11,7 +11,17 @@ dependencies {
     implementation(libs.hm.contract.pdl.avro)
 }
 
-java { toolchain { languageVersion.set(JavaLanguageVersion.of(21)) } }
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    }
+}
+
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
+    }
+}
 
 @Suppress("UnstableApiUsage")
 testing {
