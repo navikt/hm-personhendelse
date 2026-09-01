@@ -1,7 +1,7 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import no.nav.hjelpemidler.logging.teamInfo
+import no.nav.hjelpemidler.logging.teamWarn
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.streams.serialization.serde
 import no.nav.hjelpemidler.streams.serialization.specificAvroSerde
@@ -19,7 +19,7 @@ fun StreamsBuilder.personhendelse(): Map<String, PersonhendelseStream> = this
     .filter { _, personhendelse ->
         val harFnr = personhendelse.harFnr
         if (!harFnr) {
-            log.teamInfo { "Ignorerer hendelseId: ${personhendelse.hendelseId}, mangler fnr, personidenter: ${personhendelse.personidenter}" }
+            log.teamWarn { "Ignorerer hendelseId: ${personhendelse.hendelseId}, mangler fnr, personidenter: ${personhendelse.personidenter}" }
         }
         harFnr
     }

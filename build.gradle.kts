@@ -13,23 +13,23 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
 kotlin {
     compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
+        freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }
 
-@Suppress("UnstableApiUsage")
 testing {
     suites {
-        val test by getting(JvmTestSuite::class) {
-            useKotlinTest(libs.versions.kotlin.asProvider())
+        @Suppress("UnstableApiUsage")
+        val test = named<JvmTestSuite>("test") {
+            useJUnitJupiter(libs.versions.junit)
             dependencies {
-                implementation(libs.kotest.assertions.core)
+                implementation(libs.hotlibs.test)
                 implementation(libs.kafka.streams.test.utils)
             }
         }

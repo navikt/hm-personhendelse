@@ -1,14 +1,14 @@
 package no.nav.hjelpemidler.personhendelse.skjerming
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import no.nav.hjelpemidler.configuration.Environment
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
-import no.nav.hjelpemidler.domain.person.personIdentOrNullOf
 import no.nav.hjelpemidler.logging.teamInfo
+import no.nav.hjelpemidler.logging.teamWarn
 import no.nav.hjelpemidler.personhendelse.Configuration
 import no.nav.hjelpemidler.streams.serialization.fødselsnummerSerde
 import no.nav.hjelpemidler.streams.serialization.serde
 import no.nav.hjelpemidler.streams.toRapid
-import no.nav.hjelpemidler.streams.withValue
 import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.kstream.Consumed
 
@@ -19,18 +19,20 @@ fun StreamsBuilder.skjermetPersonStatus(): Unit = this
         Configuration.SKJERMEDE_PERSONER_STATUS_TOPIC,
         Consumed.with(serde<String>(), serde<String>())
     )
-    .map { ident, skjermet -> personIdentOrNullOf(ident) withValue skjermet.toBoolean() }
+    .mapValues(String::toBoolean)
+    .filter { ident, skjermet ->
+        val isFnr = Fødselsnummer.erGyldig(ident)
+        if (!isFnr) {
+            log.teamWarn { "Mottok melding om skjermet person uten gyldig fødselsnummer, ident: '$ident', skjermet: $skjermet" }
+        }
+        isFnr
+    }
+    .selectKey { ident, _ -> Fødselsnummer(ident) }
     .peek { ident, skjermet ->
         log.info { "Mottok melding om skjermet person" }
-        log.teamInfo { "Mottok melding om skjermet person, ident: $ident, skjermet: $skjermet" }
-    }
-    .filter { ident, skjermet ->
-        val harFnr = ident is Fødselsnummer
-        if (!harFnr) {
-            log.teamInfo { "Ignorerer ident: $ident, mangler fnr, skjermet: $skjermet" }
+        if (Environment.current.isDev) {
+            log.teamInfo { "Mottok melding om skjermet person, ident: '$ident', skjermet: $skjermet" }
         }
-        harFnr
     }
-    .selectKey { ident, _ -> ident as Fødselsnummer }
     .mapValues(::SkjermetPersonStatusEvent)
     .toRapid<Fødselsnummer, SkjermetPersonStatusEvent>(fødselsnummerSerde())

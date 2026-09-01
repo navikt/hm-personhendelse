@@ -17,8 +17,8 @@ import no.nav.person.pdl.leesah.adressebeskyttelse.Adressebeskyttelse
 import no.nav.person.pdl.leesah.adressebeskyttelse.Gradering
 import no.nav.person.pdl.leesah.doedsfall.Doedsfall
 import org.apache.kafka.streams.TestInputTopic
+import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import kotlin.test.Test
 
 class PersonhendelseTopologyTest {
     private val personhendelseSerde = specificAvroSerde<Personhendelse>()

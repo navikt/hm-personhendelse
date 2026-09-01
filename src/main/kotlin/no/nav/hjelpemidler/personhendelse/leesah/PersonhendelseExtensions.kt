@@ -1,19 +1,18 @@
 package no.nav.hjelpemidler.personhendelse.leesah
 
 import no.nav.hjelpemidler.domain.person.Fødselsnummer
-import no.nav.hjelpemidler.domain.person.personIdentOrNullOf
 import no.nav.person.pdl.leesah.Personhendelse
 
 val Personhendelse.harFnr: Boolean
     get() = personidenter
-        .map(::personIdentOrNullOf)
-        .filterIsInstance<Fødselsnummer>()
+        .filter(Fødselsnummer::erGyldig)
+        .map(::Fødselsnummer)
         .isNotEmpty()
 
 val Personhendelse.fnr: Fødselsnummer
     get() = personidenter
-        .map(::personIdentOrNullOf)
-        .filterIsInstance<Fødselsnummer>()
+        .filter(Fødselsnummer::erGyldig)
+        .map(::Fødselsnummer)
         .first() // fixme -> burde vi hatt single() eller kan vi ha historiske, ulike verdier her?
 
 val Personhendelse.kilde: PersonhendelseEvent.Kilde

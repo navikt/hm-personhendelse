@@ -9,7 +9,7 @@ import no.nav.hjelpemidler.personhendelse.test.asSequence
 import no.nav.hjelpemidler.personhendelse.test.testTopology
 import no.nav.hjelpemidler.streams.serialization.jsonSerde
 import no.nav.hjelpemidler.streams.serialization.serde
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 
 class SkjermetPersonStatusTopologyTest {
     private val skjermetPersonStatusEventSerde = jsonSerde<SkjermetPersonStatusEvent>()
